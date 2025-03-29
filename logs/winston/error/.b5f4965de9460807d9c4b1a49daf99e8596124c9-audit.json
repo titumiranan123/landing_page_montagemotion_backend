@@ -1,0 +1,45 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "D:\\Client_Projects\\Montage_Motion\\Montage Motion (v2)\\All-Landing_Page_Backend(v2)\\logs\\winston\\error\\.b5f4965de9460807d9c4b1a49daf99e8596124c9-audit.json",
+    "files": [
+        {
+            "date": 1743088528564,
+            "name": "D:\\Client_Projects\\Montage_Motion\\Montage Motion (v2)\\All-Landing_Page_Backend(v2)\\logs\\winston\\error\\error-2025-03-27-21.log",
+            "hash": "222436caccc604fabac4a9e5a8e5bf0e5efa35679d8a1e6e566c3e7d1f99e139"
+        },
+        {
+            "date": 1743122419352,
+            "name": "D:\\Client_Projects\\Montage_Motion\\Montage Motion (v2)\\All-Landing_Page_Backend(v2)\\logs\\winston\\error\\error-2025-03-28-06.log",
+            "hash": "301e98c0d21000fb5e447c0ff1469f46abefa2519059a62a4c618889de175a83"
+        },
+        {
+            "date": 1743123881750,
+            "name": "D:\\Client_Projects\\Montage_Motion\\Montage Motion (v2)\\All-Landing_Page_Backend(v2)\\logs\\winston\\error\\error-2025-03-28-07.log",
+            "hash": "7a51be47212146222b031f8c55a7713d5089aef96a35c0f20a4f0b82ec09f66f"
+        },
+        {
+            "date": 1743127445864,
+            "name": "D:\\Client_Projects\\Montage_Motion\\Montage Motion (v2)\\All-Landing_Page_Backend(v2)\\logs\\winston\\error\\error-2025-03-28-08.log",
+            "hash": "ea3f35d40e9c6731fbbcb55963c7eef3db0eb25bf004bcf44209b21f78b0d2aa"
+        },
+        {
+            "date": 1743137148978,
+            "name": "D:\\Client_Projects\\Montage_Motion\\Montage Motion (v2)\\All-Landing_Page_Backend(v2)\\logs\\winston\\error\\error-2025-03-28-10.log",
+            "hash": "123bfdd031f929805cd75bb604594db1eee852576aef5362bb828c4cb04e8cb2"
+        },
+        {
+            "date": 1743138119471,
+            "name": "D:\\Client_Projects\\Montage_Motion\\Montage Motion (v2)\\All-Landing_Page_Backend(v2)\\logs\\winston\\error\\error-2025-03-28-11.log",
+            "hash": "db9c4f82716d3777bbb66f43e56a8ac19b9e4f8faa7b81d0f5496a30ddc26562"
+        },
+        {
+            "date": 1743143392595,
+            "name": "D:\\Client_Projects\\Montage_Motion\\Montage Motion (v2)\\All-Landing_Page_Backend(v2)\\logs\\winston\\error\\error-2025-03-28-12.log",
+            "hash": "3fb390785baebe300b624179c7d4bc3b78e11be76305b8257574a1558690f929"
+        }
+    ],
+    "hashType": "sha256"
+}
