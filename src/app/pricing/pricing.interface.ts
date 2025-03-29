@@ -1,4 +1,4 @@
-interface Package {
+export interface IPackage {
   id: number;
   name: "Basic" | "Standard" | "Premium";
   price: number;
@@ -6,9 +6,5 @@ interface Package {
   delivery_days: number;
   revisions: number;
   features: string[];
-  is_active: boolean;
-  isTaking: boolean;
-  isPodcast: boolean;
-  isThubnail: boolean;
-  isShort: boolean;
+  type: "short_video" | "talking_head" | "podcast" | "thumbnail";
 }

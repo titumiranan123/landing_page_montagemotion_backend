@@ -6,7 +6,7 @@ import { headerVideoService } from "./header.services";
 
 export const createHeaderVideo = asyncHandler(
   async (req: Request, res: Response, _next: NextFunction) => {
-
+console.log(req.body)
     const result = await headerVideoService.addHeaderVideo(req.body);
 
     if (result) {

@@ -1,11 +1,11 @@
 import { Router } from "express";
-
+import * as pricingController from "./pricing.controller"
 const route = Router();
 
-route.get("/pricing");
-route.post("/pricing");
-route.get("/pricing/:id");
+route.post("/pricing",pricingController.createPackage);
+route.get("/pricing",pricingController.getAllPackage);
+route.get("/pricing/:id",pricingController.getPackageById);
 route.put("/pricing/:id");
-route.delete("/pricing/:id");
+route.delete("/pricing/:id",pricingController.deletePackageById);
 
 export default route;
