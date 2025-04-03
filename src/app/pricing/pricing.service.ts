@@ -62,7 +62,6 @@ export const packageService = {
             errorLogger.error(error);
         }
     }
-    
 }
 
 
