@@ -1,11 +1,17 @@
 import { Router } from "express";
 import * as headervideo from "./header.controllers"
-const route = Router();
 
-route.get("/header",headervideo.getAllHeaderVideo);
-route.post("/header",headervideo.createHeaderVideo);
-route.get("/header/:id",headervideo.getHeaderVideoById);
-route.put("/header/:id",headervideo.updateHeadervideoById);
-route.delete("/header/:id");
+const router = Router();
 
-export default route;
+router.post("/header", headervideo.createHeaderVideo);
+router.get("/header", headervideo.getAllHeaderVideos);
+router.get("/header/:id", headervideo.getHeaderVideoById);
+router.get("/header/type/:type", headervideo.getHeaderVideoByType);
+router.patch("/header/active/:id", headervideo.updateHeaderVideoActive);
+router.put("/header/:id", headervideo.updateHeaderVideo);
+router.delete("/header/:id", headervideo.deleteHeaderVideo);
+
+
+
+
+export default router;

@@ -3,5 +3,5 @@ export interface IHeader {
   thumbnail: string;
   video_link: string;
   isActive:string
-  type: "short_video" | "talking_head" | "podcast" | "thumbnail";
+  type: "main" |"shorts" | "talking" | "podcast" | "graphic" | "advertising" | "website" ;                   
 }

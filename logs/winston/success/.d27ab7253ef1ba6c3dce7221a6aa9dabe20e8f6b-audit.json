@@ -1,0 +1,25 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "D:\\Clients Projects\\Montage Motion\\Montage Motion (v2)\\All-Landing_Page_Backend(v2)\\logs\\winston\\success\\.d27ab7253ef1ba6c3dce7221a6aa9dabe20e8f6b-audit.json",
+    "files": [
+        {
+            "date": 1745119716424,
+            "name": "D:\\Clients Projects\\Montage Motion\\Montage Motion (v2)\\All-Landing_Page_Backend(v2)\\logs\\winston\\success\\success-2025-04-20-09.log",
+            "hash": "64daf53501bb1b1d54aa45cfba5adaf9f563883651e6b6d2282ec37a68fc0af2"
+        },
+        {
+            "date": 1745122033234,
+            "name": "D:\\Clients Projects\\Montage Motion\\Montage Motion (v2)\\All-Landing_Page_Backend(v2)\\logs\\winston\\success\\success-2025-04-20-10.log",
+            "hash": "cfe14aa9b11ee0bc8cea82d265c4e89a2a8bf594b71d0d4b60588b158cd7870c"
+        },
+        {
+            "date": 1745125200040,
+            "name": "D:\\Clients Projects\\Montage Motion\\Montage Motion (v2)\\All-Landing_Page_Backend(v2)\\logs\\winston\\success\\success-2025-04-20-11.log",
+            "hash": "a7f4ee75f53569e5eff476aafc5bad080e879e4d6c7e03b41feec3ae6e925b62"
+        }
+    ],
+    "hashType": "sha256"
+}
