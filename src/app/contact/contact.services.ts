@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { db } from "../../db/db";
 import ApiError from "../../utils/ApiError";
 import { getCache, setCache } from "../../utils/cache";
 import { IContact } from "./contact.interface";
 import { sendEmailToAdmin } from "./utils";
+
 
 export const contactService = {
   async createContact(data: IContact) {

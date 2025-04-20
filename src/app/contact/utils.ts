@@ -1,12 +1,11 @@
 import nodemailer from "nodemailer";
 import { IContact } from "./contact.interface";
 export async function sendEmailToAdmin(contact: IContact) {
-  // Nodemailer ট্রান্সপোর্টার কনফিগার করা
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: "titumiranan.gtc@gmail.com", // আপনার Gmail আইডি
-      pass: "lmke ziod tysh bcgo", // Gmail App Password
+      user: "titumiranan.gtc@gmail.com", 
+      pass: "lmke ziod tysh bcgo", 
     },
   });
 

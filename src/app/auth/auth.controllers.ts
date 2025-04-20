@@ -60,6 +60,7 @@ export const handleAllUser = asyncHandler(
 
 export const localLogin = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+
     passport.authenticate("local", (err: any, user: any) => {
       if (err) {
         return res.status(500).json({
@@ -98,6 +99,7 @@ export const localLogin = asyncHandler(
           location: "",
           is_successful: user ? true : false,
         };
+    
         await authService.logUserLogin(data);
         return res.status(200).json({
           success: true,

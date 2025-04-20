@@ -8,24 +8,62 @@ import headerRoute from "./app/header/header.routes";
 import pricingRoute from "./app/pricing/pricing.route";
 import testimonialRoute from "./app/testimonial/testimonial.route";
 import recentRoute from "./app/recent-project/recent.route";
+import contactRoute from "./app/contact/conatct.routes";
+import AuthRoute from "./app/auth/auth.routes";
+import session from 'express-session';
+import passport from "passport";
+import { globalErrorHandler } from "./midleware/globalErrorHandler";
+import cookieParser from "cookie-parser";
+import { RedisStore } from "connect-redis";
 
 const app = express();
 app.use(cors());
+app.use(cookieParser());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(
+  session({
+    store: new RedisStore({ client: redisClient, prefix: "samiul" }),
+    secret: "your_secret_key", // Should be a long, random string in production
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      // secure: process.env.NODE_ENV === "production",
+      httpOnly: true,
+      sameSite: "lax",
+      maxAge: 1000 * 60 * 60 * 2,
+    },
+    rolling: true,
+  }),
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+
 app.use("/api", faqRoute);
 app.use("/api", headerRoute);
 app.use("/api", pricingRoute);
 app.use("/api/", testimonialRoute);
 app.use("/api", recentRoute);
 
+app.use("/api", AuthRoute);
+app.use("/api", contactRoute);
+
 app.get("/", (_req, res) => {
   res.send("connected");
 });
+
+
+
+app.use(globalErrorHandler);
+
 (async () => {
   await redisClient.set("test-key", "Hello Redis Cloud!");
   const value = await redisClient.get("test-key");
   logger.info("Redis Test Value:", value);
 })();
+
 app.listen(config.port, () => {
   logger.info("db connected");
 });
