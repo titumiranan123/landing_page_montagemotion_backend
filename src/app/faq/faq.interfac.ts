@@ -1,7 +1,12 @@
-export interface IFaq {
-  id?: string;
+interface item {
   question: string;
   answer: string;
   isVisible: boolean;
-  type: "short_video" | "talking_head" | "podcast" | "thumbnail";
+  position:number
+}
+
+export interface IFaq {
+  id?: string;
+  faqs: item[]
+  type: "main" |"shorts" | "talking" | "podcast" | "graphic" | "advertising" | "website" ;  
 }

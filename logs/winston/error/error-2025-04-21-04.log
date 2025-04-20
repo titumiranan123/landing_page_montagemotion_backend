@@ -1,0 +1,8 @@
+Mon Apr 21 2025 4:20 [landingpage] error: null value in column "thumbnail" of relation "headers" violates not-null constraint
+Mon Apr 21 2025 4:20 [landingpage] error: Failed to insert header video.
+Mon Apr 21 2025 4:29 [landingpage] error: Redis error read ECONNRESET
+Mon Apr 21 2025 4:29 [landingpage] error: new row for relation "faqs" violates check constraint "faqs_type_check"
+Mon Apr 21 2025 4:47 [landingpage] error: syntax error at or near "="
+Mon Apr 21 2025 4:48 [landingpage] error: syntax error at or near "="
+Mon Apr 21 2025 4:48 [landingpage] error: syntax error at or near "="
+Mon Apr 21 2025 4:49 [landingpage] error: faq_services_1.faqService.getAllFaqs is not a function

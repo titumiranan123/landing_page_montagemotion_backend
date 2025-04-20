@@ -1,64 +1,73 @@
 import { db } from "../../db/db";
-import { logger } from "../../logger/logger";
+import { errorLogger } from "../../logger/logger";
 import { IFaq } from "./faq.interfac";
+
+
+const checkFaqExists = async (id: string) => {
+  const res = await db.query(`SELECT 1 FROM faqs WHERE id = $1`, [id]);
+  if (res.rowCount === 0) throw new Error("FAQ not found");
+};
 
 export const faqService = {
   async createFaq(data: IFaq) {
     try {
-      const res = await db.query(
-        `INSERT INTO faq (question,answer,isVisible,type) VALUE($1, $2, $3, $4)`,
-        [data.question, data.answer, data.isVisible, data.type]
+      const result = await db.query(
+        `INSERT INTO faqs (faqs, type) VALUES ($1, $2) RETURNING *`,
+        [JSON.stringify(data.faqs), data.type]
       );
-      return res.rows || null;
+      return result.rows[0];
     } catch (error) {
-      logger.error(error);
+      errorLogger.error(error);
+      throw new Error("Failed to create FAQ");
     }
   },
-  async getAllService() {
-    try {
-      const res = await db.query(`SELECT * FROM faq `);
-      return res.rows;
-    } catch (error) {
-      logger.error(error);
-    }
-  },
-  async getServiceById(id: string) {
-    try {
-      const res = await db.query(`SELECT * FROM faq WHERE id = $1`, [id]);
-      return res.rows;
-    } catch (error) {
-      logger.error(error);
-    }
-  },
-  async updateServiceById(data: IFaq, id: string) {
-    try {
-      const keys = Object.keys(data);
-      if (keys.length === 0) {
-        throw new Error("No fields provided for update.");
-      }
-      const setClasuse = keys
-        .map((key: string, index: number) => {
-          return `${key} = $${index + 1}`;
-        })
-        .join(",");
 
-      const res = await db.query(
-        `UPDATE faq SET ${setClasuse}  WHERE id =  $${
-          keys.length + 1
-        } RETURNING *`,
-        [...keys.map((key: string) => (data as any)[key], id)]
-      );
-      return res.rows || null;
-    } catch (error) {
-      logger.error(error);
-    }
+  async updateFaq(id: string, data: Partial<IFaq>) {
+    await checkFaqExists(id);
+    const result = await db.query(
+      `UPDATE faqs SET faqs = $1, type = $2 WHERE id = $3 RETURNING *`,
+      [JSON.stringify(data.faqs), data.type, id]
+    );
+    return result.rows[0];
   },
-  async deleteServiceById(id: string) {
-    try {
-      const res = await db.query(`DELETE  FROM faq WHERE id = $1`, [id]);
-      return res.rowCount;
-    } catch (error) {
-      logger.error(error);
+
+  async getFilteredFaqs(filter: { id?: string; type?: string }) {
+    let query = `SELECT * FROM faqs`;
+    const conditions: string[] = [];
+    const values: any[] = [];
+  
+    if (filter.id) {
+      values.push(filter.id);
+      conditions.push(`id = $${values.length}`);
     }
+  
+    if (filter.type) {
+      values.push(filter.type);
+      conditions.push(`type = $${values.length}`);
+    }
+  
+    if (conditions.length > 0) {
+      query += ` WHERE ` + conditions.join(" AND ");
+    }
+  
+    const result = await db.query(query, values);
+    return result.rows || [];
+  }
+,  
+
+  async getFaqById(id: string) {
+    const result = await db.query(`SELECT * FROM faqs WHERE id = $1`, [id]);
+    return result.rows || null;
+  },
+
+  async getFaqByType(type: string) {
+    const result = await db.query(`SELECT * FROM faqs WHERE type = $1`, [type]);
+    return result.rows;
+  },
+
+  async deleteFaq(id: string) {
+    await checkFaqExists(id);
+    const result = await db.query(`DELETE FROM faqs WHERE id = $1 RETURNING *`, [id]);
+    return result.rows[0];
   },
 };
