@@ -1,7 +1,18 @@
 export interface IState {
   id?: string;
-  successfull_projects: number;
-  experience: number;
-  total_member: number;
-  type: "short_video" | "talking_head" | "podcast" | "thumbnail";
+  isActive:boolean,
+  states: {
+    title: string;
+    count: number;
+    unit: string;
+    isPublish:boolean
+  }[];
+  type:
+    | "main"
+    | "shorts"
+    | "talking"
+    | "podcast"
+    | "graphic"
+    | "advertising"
+    | "website";
 }

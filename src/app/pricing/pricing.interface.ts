@@ -1,3 +1,9 @@
+
+
+interface IFeature{
+  feature:string
+  isActive:boolean
+}
 export interface IPackage {
   id: number;
   name: "Basic" | "Standard" | "Premium";
@@ -5,6 +11,6 @@ export interface IPackage {
   duration: number;
   delivery_days: number;
   revisions: number;
-  features: string[];
-  type: "short_video" | "talking_head" | "podcast" | "thumbnail";
+  features: IFeature[];
+  type: "main" |"shorts" | "talking" | "podcast" | "graphic" | "advertising" | "website" ;  
 }

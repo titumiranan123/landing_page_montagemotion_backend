@@ -16,6 +16,7 @@ import { globalErrorHandler } from "./midleware/globalErrorHandler";
 import cookieParser from "cookie-parser";
 import { RedisStore } from "connect-redis";
 import faqRouter from "./app/faq/faq.routes";
+import stateRouter from "./app/state/state.routes";
 
 const app = express();
 app.use(cors());
@@ -51,6 +52,7 @@ app.use("/api", recentRoute);
 app.use("/api", AuthRoute);
 app.use("/api", contactRoute);
 app.use("/api", faqRouter);
+app.use("/api", stateRouter);
 
 app.get("/", (_req, res) => {
   res.send("connected");
