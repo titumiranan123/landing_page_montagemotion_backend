@@ -17,7 +17,7 @@ router.post("/service", auth("ADMIN"),validate(createServiceSchema), createServi
 router.get("/service",auth("ADMIN"), getAllServices);
 router.get("/service/:id", getServiceById);
 router.patch("/service/:id", updateService);
-router.put("/service/:id", updateServicePositions);
+router.put("/service", updateServicePositions);
 router.delete("/service/:id", deleteService);
 
 export default router;

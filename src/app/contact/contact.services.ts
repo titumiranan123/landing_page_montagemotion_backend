@@ -26,7 +26,7 @@ export const contactService = {
     const cacheKey = "contacts";
     const cashData = await getCache(cacheKey);
     if (cashData?.length > 0) return cashData;
-    const res = await db.query(`SELECT * FROM contacts;`);
+    const res = await db.query(`SELECT * FROM contacts ORDER BY created_at DESC;`);
     await setCache(cacheKey, res.rows);
     return res.rows || null;
   },

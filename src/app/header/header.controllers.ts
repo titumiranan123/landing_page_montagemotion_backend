@@ -44,28 +44,28 @@ export const getHeaderVideoByType = asyncHandler(
   }
 );
 
-export const updateHeaderVideoActive = asyncHandler(
-  async (req: Request, res: Response) => {
-    console.log("hitted")
-    const { id } = req.params;
-    const { nextActiveId } = req.body;
-    const result = await headerVideoService.updateHeadervideoActive(nextActiveId, id);
-    return responseHandler(res, 200, true, "Header video active status updated", result);
-  }
-);
+// export const updateHeaderVideoActive = asyncHandler(
+//   async (req: Request, res: Response) => {
+//     console.log("hitted")
+//     const { id } = req.params;
+//     const { nextActiveId } = req.body;
+//     const result = await headerVideoService.updateHeadervideoActive(nextActiveId, id);
+//     return responseHandler(res, 200, true, "Header video active status updated", result);
+//   }
+// );
 
-export const updateHeaderVideo = asyncHandler(
-  async (req: Request, res: Response) => {
-    const { id } = req.params;
-    const result = await headerVideoService.updateHeadervideoById(req.body, id);
-    return responseHandler(res, 200, true, "Header video updated", result);
-  }
-);
+// export const updateHeaderVideo = asyncHandler(
+//   async (req: Request, res: Response) => {
+//     const { id } = req.params;
+//     const result = await headerVideoService.updateHeadervideoById(req.body, id);
+//     return responseHandler(res, 200, true, "Header video updated", result);
+//   }
+// );
 
-export const deleteHeaderVideo = asyncHandler(
-  async (req: Request, res: Response) => {
-    const { id } = req.params;
-    const result = await headerVideoService.deletHeadervideoById(id);
-    return responseHandler(res, 200, true, "Header video deleted", result);
-  }
-);
+// export const deleteHeaderVideo = asyncHandler(
+//   async (req: Request, res: Response) => {
+//     const { id } = req.params;
+//     const result = await headerVideoService.deletHeadervideoById(id);
+//     return responseHandler(res, 200, true, "Header video deleted", result);
+//   }
+// );

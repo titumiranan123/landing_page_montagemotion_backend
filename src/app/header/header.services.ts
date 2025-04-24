@@ -5,24 +5,64 @@ import { IHeader } from "./header.interface";
 
 export const headerVideoService = {
   async addHeaderVideo(data: IHeader) {
+    let client;
     try {
-      if (data.isActive) {
-        await db.query(`UPDATE headers SET isActive = false WHERE type = $1`, [
-          data.type,
-        ]);
-      }
-
-      const result = await db.query(
-        `INSERT INTO headers (thumbnail, video_link, isActive, type) 
-         VALUES ($1, $2, $3, $4) 
-         RETURNING *`,
-        [data.thumbnail, data.video_link, data.isActive, data.type]
+      client = await db.connect();
+      await client.query('BEGIN');
+  
+      // First check if a header of this type already exists
+      const existingHeader = await client.query(
+        `SELECT id FROM headers WHERE type = $1 LIMIT 1`,
+        [data.type]
       );
 
-      return result.rows || null;
+      if (existingHeader.rows.length > 0) {
+        // Update existing header of this type
+        const result = await client.query(
+          `UPDATE headers 
+           SET title = $1, description = $2, thumbnail = $3, 
+               video_link = $4,  updated_at = NOW()
+           WHERE type = $5 
+           RETURNING *`,
+          [
+            data.title,
+            data.description,
+            data.thumbnail,
+            data.video_link,
+            data.type
+          ]
+        );
+        await client.query('COMMIT');
+        return result.rows[0] || null;
+      } else {
+        // Insert new header
+        const result = await client.query(
+          `INSERT INTO headers 
+           (title, description, thumbnail, video_link, is_active, type) 
+           VALUES ($1, $2, $3, $4, $5, $6) 
+           RETURNING *`,
+          [
+            data.title,
+            data.description,
+            data.thumbnail,
+            data.video_link,
+            true,
+            data.type
+          ]
+        );
+        await client.query('COMMIT');
+        return result.rows[0] || null;
+      }
     } catch (error) {
+      if (client) {
+        await client.query('ROLLBACK');
+      }
       errorLogger.error(error);
-      throw new Error("Failed to insert header video.");
+      throw new Error("Failed to process header video.");
+    } finally {
+      if (client) {
+        client.release();
+      }
     }
   },
 
@@ -45,43 +85,43 @@ export const headerVideoService = {
     ]);
     return result.rows || null;
   },
-  async updateHeadervideoActive(nextActiveId:string, id: string) {
-    checkHeaders(id)
-    checkHeaders(nextActiveId)
-    const client = await db.connect();
-    try {
-      await client.query("BEGIN");
+  // async updateHeadervideoActive(nextActiveId:string, id: string) {
+  //   checkHeaders(id)
+  //   checkHeaders(nextActiveId)
+  //   const client = await db.connect();
+  //   try {
+  //     await client.query("BEGIN");
 
-    // Step 1: Make current active false
-    const res1 = await client.query(
-      `UPDATE headers SET isActive = false WHERE id = $1 AND isActive = true`,
-      [id]
-    );
+  //   // Step 1: Make current active false
+  //   const res1 = await client.query(
+  //     `UPDATE headers SET isActive = false WHERE id = $1 AND isActive = true`,
+  //     [id]
+  //   );
 
-    if (res1.rowCount === 0) {
-      throw new Error("Current active header not found or already inactive.");
-    }
+  //   if (res1.rowCount === 0) {
+  //     throw new Error("Current active header not found or already inactive.");
+  //   }
 
-    // Step 2: Make next one active
-    const res2 = await client.query(
-      `UPDATE headers SET isActive = true WHERE id = $1 AND isActive = false RETURNING *`,
-      [nextActiveId]
-    );
+  //   // Step 2: Make next one active
+  //   const res2 = await client.query(
+  //     `UPDATE headers SET isActive = true WHERE id = $1 AND isActive = false RETURNING *`,
+  //     [nextActiveId]
+  //   );
 
-    if (res2.rowCount === 0) {
-      throw new Error("Next header not found or already active.");
-    }
+  //   if (res2.rowCount === 0) {
+  //     throw new Error("Next header not found or already active.");
+  //   }
 
-    // If both updates worked, commit
-    await client.query("COMMIT");
-    return res2.rows;
-  } catch (error:any) {
-    await client.query("ROLLBACK");
-    throw new Error(`Transaction failed: ${error.message}`);
-  } finally {
-    client.release();
-  }
-  },
+  //   // If both updates worked, commit
+  //   await client.query("COMMIT");
+  //   return res2.rows;
+  // } catch (error:any) {
+  //   await client.query("ROLLBACK");
+  //   throw new Error(`Transaction failed: ${error.message}`);
+  // } finally {
+  //   client.release();
+  // }
+  // },
   async updateHeadervideoById(data: IHeader, id: string) {
     checkHeaders(id)
    
