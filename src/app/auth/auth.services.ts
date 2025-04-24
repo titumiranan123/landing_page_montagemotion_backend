@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import config from "../../config";
 import { db } from "../../db/db";
 import { errorLogger, logger } from "../../logger/logger";
 import ApiError from "../../utils/ApiError";
@@ -7,6 +8,7 @@ import { generateVerificationCode } from "../../utils/generateVerificationCode";
 import { sendVerificationEmail } from "../../utils/sendVerificationEmail";
 import { IUser, UserLoginHistory } from "./auth.interface";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 export const authService = {
   async createUser(data: IUser) {
@@ -24,7 +26,7 @@ export const authService = {
         throw new ApiError(
           400,
           false,
-          "Name, email, and password are required.",
+          "Name, email, and password are required."
         );
       }
 
@@ -32,36 +34,35 @@ export const authService = {
       const exists = await checkUser(email);
       if (exists) {
         errorLogger.error("User already exists");
-        throw new ApiError(400, false, "User already exists"); // This will now be an ApiError
+        throw new ApiError(400, false, "User already exists");
       }
 
-      const hashedPassword = await bcrypt.hash(data.password, 10);
+      const hashedPassword = await bcrypt.hash(password, 10);
       const verificationToken = generateVerificationCode();
       const verificationTokenExpiresAt = new Date(
-        Date.now() + 24 * 60 * 60 * 1000,
+        Date.now() + 24 * 60 * 60 * 1000
       );
 
       const createUserQuery = `
-      INSERT INTO users (name, email, password)
-      VALUES ($1, $2, $3)
-      RETURNING *;
-    `;
+        INSERT INTO users (name, email, password)
+        VALUES ($1, $2, $3)
+        RETURNING *;
+      `;
 
       const res = await client.query(createUserQuery, [
-        data.name,
-        data.email,
+        name,
+        email,
         hashedPassword,
       ]);
-
       const userId = res.rows[0].id;
 
       const createDynamicDataQuery = `
-      INSERT INTO user_dynamic_data (
-        user_id, verification_token, verification_token_expires_at, updated_at
-      )
-      VALUES ($1, $2, $3, $4)
-      RETURNING *;
-    `;
+        INSERT INTO user_dynamic_data (
+          user_id, verification_token, verification_token_expires_at, updated_at
+        )
+        VALUES ($1, $2, $3, $4)
+        RETURNING *;
+      `;
 
       await client.query(createDynamicDataQuery, [
         userId,
@@ -73,14 +74,14 @@ export const authService = {
       await client.query("COMMIT");
 
       const info = {
-        name: data.name,
-        email: data.email,
+        name: name,
+        email: email,
         code: verificationToken,
       };
 
       await sendVerificationEmail(info);
 
-      return res.rows || null;
+      return res.rows[0];
     } catch (error: any) {
       await client.query("ROLLBACK");
       errorLogger.error("Auth Error:", error);
@@ -89,90 +90,255 @@ export const authService = {
       client.release();
     }
   },
+
   async verifyToken(code: string) {
     const client = await db.connect();
 
     try {
       await client.query("BEGIN");
 
-      // Step 1: Check if the user exists and token is valid
+      // Check if the verification token is valid
       const res = await client.query(
-        `SELECT user_id FROM user_dynamic_data WHERE verification_token = $1 AND verification_token_expires_at > NOW() FOR UPDATE LIMIT 1`,
-        [code],
+        `SELECT user_id FROM user_dynamic_data 
+         WHERE verification_token = $1 
+         AND verification_token_expires_at > NOW() 
+         FOR UPDATE LIMIT 1`,
+        [code]
       );
 
       if (res.rowCount === 0) {
-        await client.query("ROLLBACK");
-        return null;
+        throw new ApiError(400, false, "Invalid or expired verification token");
       }
+
       const userId = res.rows[0].user_id;
-      // Step 2: Update the user status
+
+      // Update the user status
       const updateUser = await client.query(
         `UPDATE users 
-       SET verified = $1, status = $2 
-       WHERE id = $3 
-       RETURNING id, name, email, verified, status`,
-        [true, "active", userId],
+         SET verified = true, status = 'active' 
+         WHERE id = $1 
+         RETURNING id, name, email, verified, status`,
+        [userId]
       );
+
       if (updateUser.rowCount === 0) {
-        await client.query("ROLLBACK");
-        return null;
+        throw new ApiError(400, false, "User verification failed");
       }
+
+      // Clear the verification token
+      await client.query(
+        `UPDATE user_dynamic_data 
+         SET verification_token = NULL, verification_token_expires_at = NULL 
+         WHERE user_id = $1`,
+        [userId]
+      );
+
       await client.query("COMMIT");
-      return updateUser.rows;
+      return updateUser.rows[0];
     } catch (error: any) {
       await client.query("ROLLBACK");
-      new Error(error.message);
+      errorLogger.error("Verification Error:", error);
+      throw error instanceof ApiError
+        ? error
+        : new ApiError(500, false, error.message || "Verification failed");
     } finally {
       client.release();
     }
   },
-  async allUsers() {
-    const res = await db.query("SELECT * FROM users ");
-    return res.rows;
-  },
-  async makeAdmin(id: string) {
+
+  async login(
+    data: { email: string; password: string },
+    logData: Partial<UserLoginHistory>
+  ) {
+    const client = await db.connect();
+    let loginSuccessful = false;
     try {
-      const res = await db.query(
-        `UPDATE  users SET role = $1 WHERE id = $2 RETURNING *`,
-        ["ADMIN", id],
+      const result = await client.query(
+        `SELECT * FROM users WHERE email = $1`,
+        [data.email]
       );
-      return Boolean(res.rowCount);
+
+      if (result.rowCount === 0) {
+        throw new ApiError(404, false, "User not found");
+      }
+
+      const user = result.rows[0];
+
+      // if (!user.verified) {
+      //   throw new ApiError(403, false, "Please verify your email first");
+      // }
+
+      // if (user.status !== 'active') {
+      //   throw new ApiError(403, false, "Your account is not active");
+      // }
+
+      const passwordMatch = await bcrypt.compare(data.password, user.password);
+      if (!passwordMatch) {
+        throw new ApiError(401, false, "Invalid credentials");
+      }
+
+      const token = jwt.sign(
+        {
+          id: user.id,
+          email: user.email,
+          role: user.role,
+        },
+        config.jwt_secret as string,
+        { expiresIn: "24h" }
+      );
+
+      loginSuccessful = true;
+
+      const logs = {
+        user_id: user.id,
+        device: logData.device,
+        browser: logData.browser,
+        ip_address: logData.ip_address,
+        location: logData.location,
+        is_successful: true,
+        login_time: new Date(),
+      };
+
+      await this.logUserLogin(logs);
+
+      return {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        verified: user.verified,
+        status: user.status,
+        token,
+      };
     } catch (error: any) {
-      throw new ApiError(400, false, error.message);
+      errorLogger.error("Login Error:", error);
+      throw error instanceof ApiError
+        ? error
+        : new ApiError(500, false, error.message || "Login failed");
+    } finally {
+      // Log failed login attempt
+      if (!loginSuccessful && data.email) {
+        try {
+          const failedLog = {
+            user_id: data.email,
+            device: logData.device,
+            browser: logData.browser,
+            ip_address: logData.ip_address,
+            location: logData.location,
+            is_successful: false,
+            login_time: new Date(),
+          };
+          await this.logUserLogin(failedLog);
+        } catch (logError) {
+          errorLogger.error(
+            "Failed to log unsuccessful login attempt:",
+            logError
+          );
+        }
+      }
+      client.release();
     }
   },
-  async logUserLogin(data: UserLoginHistory) {
+
+  async allUsers() {
+    try {
+      const res = await db.query(
+        "SELECT id, name, email, role, verified, status FROM users"
+      );
+      return res.rows;
+    } catch (error: any) {
+      errorLogger.error("Error fetching users:", error);
+      throw new ApiError(500, false, "Failed to fetch users");
+    }
+  },
+
+  async makeAdmin(id: string) {
+    const client = await db.connect();
+    try {
+      await client.query("BEGIN");
+
+      const res = await client.query(
+        `UPDATE users SET role = 'ADMIN' WHERE id = $1 RETURNING id, name, email, role`,
+        [id]
+      );
+
+      if (res.rowCount === 0) {
+        throw new ApiError(404, false, "User not found");
+      }
+
+      await client.query("COMMIT");
+      return res.rows[0];
+    } catch (error: any) {
+      await client.query("ROLLBACK");
+      errorLogger.error("Error making user admin:", error);
+      throw new ApiError(
+        400,
+        false,
+        error.message || "Failed to update user role"
+      );
+    } finally {
+      client.release();
+    }
+  },
+
+  async logUserLogin(data: Partial<UserLoginHistory>) {
     const query = `
-    INSERT INTO user_login_history (user_id, device, browser, ip_address, login_time, location, is_successful)
-    VALUES ($1, $2, $3, $4, NOW(), $5, $6)
-    RETURNING *;
-  `;
+      INSERT INTO user_login_history (
+        user_id, device, browser, ip_address, login_time, location, is_successful
+      )
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      RETURNING *;
+    `;
 
     try {
       const res = await db.query(query, [
-        data.user_id || "",
-        data.device || "",
-        data.browser || "",
-        data.ip_address || "",
-        data.location || "",
-        data.is_successful || true,
+        data.user_id ?? null,
+        data.device ?? null,
+        data.browser ?? null,
+        data.ip_address ?? null,
+        data.login_time ?? new Date(),
+        data.location ?? null,
+        data.is_successful ?? false,
       ]);
       logger.info("Login history stored:", res.rows[0]);
       return res.rows[0];
     } catch (error) {
       errorLogger.error("Error storing login history:", error);
+      throw new ApiError(500, false, "Failed to log login attempt");
     }
   },
+
   async deleteUser(id: string) {
+    const client = await db.connect();
     try {
-      const res = await db.query(
-        `DELETE FROM users WHERE id = $1 RETURNING *`,
-        [id],
+      await client.query("BEGIN");
+
+      // First delete dependent records
+      await client.query(`DELETE FROM user_dynamic_data WHERE user_id = $1`, [
+        id,
+      ]);
+      await client.query(`DELETE FROM user_login_history WHERE user_id = $1`, [
+        id,
+      ]);
+
+      // Then delete the user
+      const res = await client.query(
+        `DELETE FROM users WHERE id = $1 RETURNING id`,
+        [id]
       );
-      return Boolean(res.rowCount);
+
+      if (res.rowCount === 0) {
+        throw new ApiError(404, false, "User not found");
+      }
+
+      await client.query("COMMIT");
+      return true;
     } catch (error: any) {
-      throw new ApiError(400, false, error.message);
+      await client.query("ROLLBACK");
+      errorLogger.error("Error deleting user:", error);
+      throw new ApiError(400, false, error.message || "Failed to delete user");
+    } finally {
+      client.release();
     }
   },
 };

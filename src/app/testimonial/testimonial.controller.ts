@@ -1,19 +1,18 @@
 import { NextFunction, Request, Response } from "express";
 import { asyncHandler } from "../../midleware/asyncHandler";
 import { responseHandler } from "../../utils/responseHandler";
-import { VideosService } from "../recent-project/recent.service";
+import { testimonialService } from "./testimonial.services";
 
 export const createTestimonial = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    console.log("req.bodr ", req.body);
-    const result = await VideosService.addVideo(req.body);
-
+    
+    const result = await testimonialService.addTestimonial(req.body);
     if (result) {
       return responseHandler(
         res,
         201,
         true,
-        "Video created successfully",
+        "Testimonial created successfully",
         result
       );
     }
@@ -24,7 +23,7 @@ export const createTestimonial = asyncHandler(
 
 export const getAllTestimonial = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const result = await VideosService.getAllVideos();
+    const result = await testimonialService.getAllTestimonial();
     if (result) {
       return responseHandler(
         res,
@@ -39,7 +38,7 @@ export const getAllTestimonial = asyncHandler(
 );
 export const getTestimonialById = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const result = await VideosService.getVideosById(req.params.id);
+    const result = await testimonialService.getTestimonialById(req.params.id);
     if (result) {
       return responseHandler(
         res,
@@ -54,7 +53,7 @@ export const getTestimonialById = asyncHandler(
 );
 export const updateTestimonialById = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const result = await VideosService.getVideosById(req.params.id);
+    const result = await testimonialService.getTestimonialById(req.params.id);
     if (result) {
       return responseHandler(
         res,
@@ -69,7 +68,7 @@ export const updateTestimonialById = asyncHandler(
 );
 export const updateTestimonialposition = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const result = await VideosService.updateVideosPositions(
+    const result = await testimonialService.updateTestimonialPositions(
       req.body
     );
     if (result) {

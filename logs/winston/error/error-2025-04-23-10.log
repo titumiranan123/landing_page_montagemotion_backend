@@ -1,0 +1,92 @@
+Wed Apr 23 2025 10:15 [landingpage] error: [
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "undefined",
+    "path": [
+      "title"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "undefined",
+    "path": [
+      "description"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "boolean",
+    "received": "undefined",
+    "path": [
+      "isPublish"
+    ],
+    "message": "isPublish is required"
+  }
+]
+Wed Apr 23 2025 10:47 [landingpage] error: [
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "undefined",
+    "path": [
+      "title"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "undefined",
+    "path": [
+      "description"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "boolean",
+    "received": "undefined",
+    "path": [
+      "isPublish"
+    ],
+    "message": "isPublish is required"
+  }
+]
+Wed Apr 23 2025 10:48 [landingpage] error: [
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "undefined",
+    "path": [
+      "title"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "undefined",
+    "path": [
+      "description"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "boolean",
+    "received": "undefined",
+    "path": [
+      "isPublish"
+    ],
+    "message": "isPublish is required"
+  }
+]
+Wed Apr 23 2025 10:51 [landingpage] error: null value in column "thumbnail" of relation "videos" violates not-null constraint
+Wed Apr 23 2025 10:52 [landingpage] error: null value in column "thumbnail" of relation "videos" violates not-null constraint
+Wed Apr 23 2025 10:54 [landingpage] error: column "image" of relation "testimonials" does not exist
+Wed Apr 23 2025 10:56 [landingpage] error: bind message supplies 6 parameters, but prepared statement "" requires 7
+Wed Apr 23 2025 10:56 [landingpage] error: bind message supplies 6 parameters, but prepared statement "" requires 7

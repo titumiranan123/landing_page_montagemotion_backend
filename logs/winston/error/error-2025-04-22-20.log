@@ -1,0 +1,10 @@
+Tue Apr 22 2025 20:7 [landingpage] error: Login Error: Invalid credentials
+Tue Apr 22 2025 20:7 [landingpage] error: Error storing login history: invalid input syntax for type uuid: "titumiranan.gtc@gmail.com"
+Tue Apr 22 2025 20:7 [landingpage] error: Failed to log unsuccessful login attempt: Failed to log login attempt
+Tue Apr 22 2025 20:7 [landingpage] error: Invalid credentials
+Tue Apr 22 2025 20:40 [landingpage] error: Redis error read ECONNRESET
+Tue Apr 22 2025 20:40 [landingpage] error: Redis error read ECONNRESET
+Tue Apr 22 2025 20:40 [landingpage] error: Redis error getaddrinfo ENOTFOUND redis-11926.c264.ap-south-1-1.ec2.redns.redis-cloud.com
+Tue Apr 22 2025 20:40 [landingpage] error: Redis error getaddrinfo ENOTFOUND redis-11926.c264.ap-south-1-1.ec2.redns.redis-cloud.com
+Tue Apr 22 2025 20:40 [landingpage] error: Redis error getaddrinfo ENOTFOUND redis-11926.c264.ap-south-1-1.ec2.redns.redis-cloud.com
+Tue Apr 22 2025 20:40 [landingpage] error: Redis error getaddrinfo ENOTFOUND redis-11926.c264.ap-south-1-1.ec2.redns.redis-cloud.com

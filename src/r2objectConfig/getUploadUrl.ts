@@ -7,7 +7,7 @@ export const getUploadUrl = async (req: Request) => {
     throw new ApiError(400, false, "No file uploaded");
   }
   const fileBuffer = req.file?.buffer;
-  const fileName = req.file?.originalname;
+  const fileName = req.file?.originalname.replace(/\s+/g, '-').toLowerCase();
   const contentType = req.file?.mimetype;
 
   const fileUrl = await uploadToR2(

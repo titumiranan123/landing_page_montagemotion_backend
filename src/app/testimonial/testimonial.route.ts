@@ -8,11 +8,11 @@ import {
 
 const route = Router();
 
-route.post("/testimonial", createTestimonial);
-route.get("/testimonial", getAllTestimonial);
-route.get("/testimonial/:id", getTestimonialById);
-route.put("/testimonial", updateTestimonialposition);
-route.put("/testimonial/:id");
-route.delete("/testimonial/:id");
+route.post("/testimonials", createTestimonial);
+route.get("/testimonials", getAllTestimonial);
+route.get("/testimonials/:id", getTestimonialById);
+route.put("/testimonials", updateTestimonialposition);
+route.put("/testimonials/:id");
+route.delete("/testimonials/:id");
 
 export default route;

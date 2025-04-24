@@ -2,7 +2,7 @@
 import { ListBucketsCommand, S3Client } from "@aws-sdk/client-s3";
 import { errorLogger, logger } from "../logger/logger";
 import ApiError from "../utils/ApiError";
-import crypto from "crypto";
+
 import { Upload } from "@aws-sdk/lib-storage";
 export const r2Client = new S3Client({
   region: "auto",
@@ -29,7 +29,7 @@ export const uploadToR2 = async (
   contentType: string,
 ) => {
   try {
-    const fileKey = `${crypto.randomUUID}-${fileName}`;
+    const fileKey = `montagemotion-${fileName}`;
     const upload = new Upload({
       client: r2Client,
       params: {

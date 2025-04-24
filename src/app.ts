@@ -7,42 +7,26 @@ import faqRoute from "./app/faq/faq.routes";
 import headerRoute from "./app/header/header.routes";
 import pricingRoute from "./app/pricing/pricing.route";
 import testimonialRoute from "./app/testimonial/testimonial.route";
-import recentRoute from "./app/recent-project/recent.route";
+import recentRoute from "./app/work/work.route";
 import contactRoute from "./app/contact/conatct.routes";
 import AuthRoute from "./app/auth/auth.routes";
-import session from 'express-session';
-import passport from "passport";
 import { globalErrorHandler } from "./midleware/globalErrorHandler";
 import cookieParser from "cookie-parser";
-import { RedisStore } from "connect-redis";
 import faqRouter from "./app/faq/faq.routes";
 import stateRouter from "./app/state/state.routes";
+import serviceRoute from "./app/services/service.route";
+import uploadRoute from "./app/upload/upload.route";
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin:"http://localhost:3000",
+  methods:['GET','POST','PUT','DELETE'],
+  credentials:true
+}));
+
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(
-  session({
-    store: new RedisStore({ client: redisClient, prefix: "samiul" }),
-    secret: "your_secret_key", // Should be a long, random string in production
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      // secure: process.env.NODE_ENV === "production",
-      httpOnly: true,
-      sameSite: "lax",
-      maxAge: 1000 * 60 * 60 * 2,
-    },
-    rolling: true,
-  }),
-);
-
-app.use(passport.initialize());
-app.use(passport.session());
-
-
 app.use("/api", faqRoute);
 app.use("/api", headerRoute);
 app.use("/api", pricingRoute);
@@ -53,6 +37,8 @@ app.use("/api", AuthRoute);
 app.use("/api", contactRoute);
 app.use("/api", faqRouter);
 app.use("/api", stateRouter);
+app.use("/api", serviceRoute);
+app.use("/api", uploadRoute);
 
 app.get("/", (_req, res) => {
   res.send("connected");

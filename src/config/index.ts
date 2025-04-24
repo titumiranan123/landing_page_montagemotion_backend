@@ -3,6 +3,7 @@ import path from "path";
 dotenv.config({ path: path.join(process.cwd(), ".env") });
 export default {
   port: process.env.PORT,
+  jwt_secret: process.env.JWT_SECREATE,
   node_env: process.env.NODE_ENV,
   r2accesskeyId: process.env.R2_ACCESS_KEY_ID,
   r2secretaccesskey: process.env.R2_SECRET_ACCESS_KEY,

@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import { asyncHandler } from "../../midleware/asyncHandler";
 import { responseHandler } from "../../utils/responseHandler";
-import { VideosService } from "../recent-project/recent.service";
+import { VideosService } from "./workservice";
 
 export const createVideo = asyncHandler(
   async (req: Request, res: Response, _next: NextFunction) => {
-    console.log("req.bodr ", req.body);
+   
     const result = await VideosService.addVideo(req.body);
 
     if (result) {
@@ -13,28 +13,29 @@ export const createVideo = asyncHandler(
         res,
         201,
         true,
-        "Video created successfully",
+        "Works created successfully",
         result
       );
     }
 
-    return responseHandler(res, 400, false, "Video creation failed");
+    return responseHandler(res, 400, false, "Works creation failed");
   }
 );
 
 export const getAllVideos = asyncHandler(
   async (_req: Request, res: Response, next: NextFunction) => {
     const result = await VideosService.getAllVideos();
+
     if (result) {
       return responseHandler(
         res,
         200,
         true,
-        "Video Retrive successfully",
+        "Works Retrive successfully",
         result
       );
     }
-    responseHandler(res, 400, false, "Video Retrive failed", result);
+    responseHandler(res, 400, false, "Works Retrive failed", result);
   }
 );
 export const getVideosById = asyncHandler(
@@ -45,11 +46,11 @@ export const getVideosById = asyncHandler(
         res,
         200,
         true,
-        "Video Retrive successfully",
+        "Works Retrive successfully",
         result
       );
     }
-    responseHandler(res, 400, false, "Video Retrive failed", result);
+    responseHandler(res, 400, false, "Works Retrive failed", result);
   }
 );
 export const updateVideosById = asyncHandler(
@@ -60,11 +61,11 @@ export const updateVideosById = asyncHandler(
         res,
         200,
         true,
-        "Video Retrive successfully",
+        "Works Retrive successfully",
         result
       );
     }
-    responseHandler(res, 400, false, "Video Retrive failed", result);
+    responseHandler(res, 400, false, "Works Retrive failed", result);
   }
 );
 export const updateVideosposition = asyncHandler(
@@ -77,10 +78,10 @@ export const updateVideosposition = asyncHandler(
         res,
         200,
         true,
-        "Videos update successfully",
+        "Works update successfully",
         result
       );
     }
-    responseHandler(res, 400, false, "Videos update failed", result);
+    responseHandler(res, 400, false, "Works update failed", result);
   }
 );

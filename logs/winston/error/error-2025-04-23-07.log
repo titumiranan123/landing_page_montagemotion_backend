@@ -1,0 +1,126 @@
+Wed Apr 23 2025 7:20 [landingpage] error: [
+  {
+    "code": "invalid_type",
+    "expected": "boolean",
+    "received": "undefined",
+    "path": [
+      "isPublish"
+    ],
+    "message": "isPublish is required"
+  }
+]
+Wed Apr 23 2025 7:36 [landingpage] error: Redis error read ECONNRESET
+Wed Apr 23 2025 7:36 [landingpage] error: [
+  {
+    "code": "invalid_type",
+    "expected": "boolean",
+    "received": "undefined",
+    "path": [
+      "isPublish"
+    ],
+    "message": "isPublish is required"
+  }
+]
+Wed Apr 23 2025 7:42 [landingpage] error: [
+  {
+    "code": "invalid_type",
+    "expected": "boolean",
+    "received": "undefined",
+    "path": [
+      "isPublish"
+    ],
+    "message": "isPublish is required"
+  }
+]
+Wed Apr 23 2025 7:45 [landingpage] error: [
+  {
+    "code": "invalid_type",
+    "expected": "boolean",
+    "received": "undefined",
+    "path": [
+      "isPublish"
+    ],
+    "message": "isPublish is required"
+  }
+]
+Wed Apr 23 2025 7:46 [landingpage] error: [
+  {
+    "code": "invalid_type",
+    "expected": "boolean",
+    "received": "undefined",
+    "path": [
+      "isPublish"
+    ],
+    "message": "isPublish is required"
+  }
+]
+Wed Apr 23 2025 7:46 [landingpage] error: [
+  {
+    "code": "invalid_type",
+    "expected": "boolean",
+    "received": "undefined",
+    "path": [
+      "isPublish"
+    ],
+    "message": "isPublish is required"
+  }
+]
+Wed Apr 23 2025 7:47 [landingpage] error: [
+  {
+    "code": "invalid_type",
+    "expected": "boolean",
+    "received": "undefined",
+    "path": [
+      "isPublish"
+    ],
+    "message": "isPublish is required"
+  }
+]
+Wed Apr 23 2025 7:47 [landingpage] error: [
+  {
+    "code": "invalid_type",
+    "expected": "boolean",
+    "received": "undefined",
+    "path": [
+      "isPublish"
+    ],
+    "message": "isPublish is required"
+  }
+]
+Wed Apr 23 2025 7:47 [landingpage] error: [
+  {
+    "code": "invalid_type",
+    "expected": "boolean",
+    "received": "undefined",
+    "path": [
+      "isPublish"
+    ],
+    "message": "isPublish is required"
+  }
+]
+Wed Apr 23 2025 7:54 [landingpage] error: [
+  {
+    "code": "too_small",
+    "minimum": 1,
+    "type": "string",
+    "inclusive": true,
+    "exact": false,
+    "message": "Description is required",
+    "path": [
+      "description"
+    ]
+  }
+]
+Wed Apr 23 2025 7:55 [landingpage] error: [
+  {
+    "code": "too_small",
+    "minimum": 1,
+    "type": "string",
+    "inclusive": true,
+    "exact": false,
+    "message": "Description is required",
+    "path": [
+      "description"
+    ]
+  }
+]

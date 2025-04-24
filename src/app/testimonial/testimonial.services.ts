@@ -13,11 +13,12 @@ export const testimonialService = {
         lastdata.rows.length > 0 ? lastdata.rows[0].position + 1 : 1;
 
       const result = await db.query(
-        `INSERT INTO testimonials (name,designation,message,video_message,position,type) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *`,
+        `INSERT INTO testimonials (name,designation,message,image,video_message,position,type) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *`,
         [
           data.name,
           data.designation,
           data.message || "",
+          data.image,
           data.video_message || "",
           newPosition,
           data.type,
@@ -30,11 +31,11 @@ export const testimonialService = {
   },
   async getAllTestimonial() {
     const cacheKey = "all_testimonial";
-    const cashData = await getCache(cacheKey);
-    console.log("cashData", cashData);
-    if (cashData) return cashData;
+    // const cashData = await getCache(cacheKey);
+    // console.log("cashData", cashData);
+    // if (cashData) return cashData;
     const result = await db.query(`SELECT * FROM testimonials`);
-    await setCache(cacheKey, result.rows);
+    // await setCache(cacheKey, result.rows);
 
     return result.rows;
   },
@@ -68,4 +69,7 @@ export const testimonialService = {
       errorLogger.error(error);
     }
   },
+  async deleteTestimonialById(id:string){
+
+  }
 };
