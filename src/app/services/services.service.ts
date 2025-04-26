@@ -3,7 +3,7 @@ import { IService } from "./service.interface";
 
 export const serviceService = {
   async createService(data: IService) { 
-    const positionResult = await db.query(`SELECT MAX(position) as max FROM services`)
+    const positionResult = await db.query(`SELECT MAX(position) as max FROM services `)
     const lastPosition = positionResult.rows[0]?.max|| 0
     const newPosition = lastPosition + 1
     const result = await db.query(

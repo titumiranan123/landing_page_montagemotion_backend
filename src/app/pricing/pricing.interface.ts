@@ -1,16 +1,21 @@
-
-
 interface IFeature{
   feature:string
-  isActive:boolean
+  is_present:string
+  is_active:boolean
+  position:number
 }
 export interface IPackage {
   id: number;
+  is_visible:boolean;
   name: "Basic" | "Standard" | "Premium";
+  title:string;
+  description:string;
+  currency:string;
   price: number;
-  duration: number;
-  delivery_days: number;
-  revisions: number;
+  unit:string;
   features: IFeature[];
-  type: "main" |"shorts" | "talking" | "podcast" | "graphic" | "advertising" | "website" ;  
+  note:string
+  puchase_link:string
+  pricing_type:'single'|"combo"
+  type: "main" |"shorts" | "talking" | "podcast" | "graphic" | "advertising" | "website" ; 
 }

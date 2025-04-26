@@ -1,11 +1,31 @@
 import { Router } from "express";
-import * as pricingController from "./pricing.controller"
-const route = Router();
+import {
+  createPackage,
+  getAllPackages,
+  getPackageById,
+  updatePackage,
+  deletePackage,
+  addFeature,
+  updateFeature,
+  deleteFeature,
+  updatePackagePosition,
+  updateFeauterPosition,
+} from "./pricing.controller";
 
-route.post("/pricing",pricingController.createPackage);
-route.get("/pricing",pricingController.getAllPackages);
-route.get("/pricing/:id",pricingController.getPackageById);
-route.patch("/pricing/:id",pricingController.updatePackage);
-route.delete("/pricing/:id",pricingController.deletePackage);
+const router = Router();
 
-export default route;
+// Package routes
+router.post("/pricing/", createPackage);
+router.get("/pricing/", getAllPackages);
+router.get("/pricing/:id", getPackageById);
+router.patch("/pricing/:id", updatePackage);
+router.put("/pricing/", updatePackagePosition);
+router.delete("/pricing/:id", deletePackage);
+
+// Feature routes
+router.post("/pricing/:packageId/feature", addFeature);           // Add single feature to a package
+router.patch("/pricing/feature/:featureId", updateFeature);         // Update single feature by ID
+router.put("/pricing/feature/:packageId", updateFeauterPosition);         // Update single feature by ID
+router.delete("/pricing/feature/:featureId", deleteFeature);      // Delete single feature by ID
+
+export default router;

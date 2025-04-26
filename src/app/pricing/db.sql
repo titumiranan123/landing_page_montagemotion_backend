@@ -1,28 +1,29 @@
+
 CREATE TABLE packages (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name VARCHAR(50) NOT NULL CHECK (name IN ('Basic', 'Standard', 'Premium')),
-  price NUMERIC NOT NULL,
-  duration INT NOT NULL,
-  delivery_days INT NOT NULL,
-  revisions INT NOT NULL,
-  type VARCHAR(50) NOT NULL CHECK (
-    type IN (
-      'main',
-      'shorts',
-      'talking',
-      'podcast',
-      'graphic',
-      'advertising',
-      'website'
-    )
-  ),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  is_visible BOOLEAN DEFAULT TRUE,
+  name VARCHAR(255) NOT NULL,
+  title VARCHAR(255),
+  description TEXT,
+  currency VARCHAR(10) DEFAULT 'USD',
+  price NUMERIC(10, 2) NOT NULL,
+  unit VARCHAR(50),
+  pricing_type VARCHAR(50),
+  note TEXT,
+  puchase_link TEXT,
+  type VARCHAR(100),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+
 CREATE TABLE package_features (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  package_id INT REFERENCES packages(id) ON DELETE CASCADE,
+  package_id INTEGER NOT NULL REFERENCES packages(id) ON DELETE CASCADE,
   feature TEXT NOT NULL,
-  isActive BOOLEAN DEFAULT true
+  is_present BOOLEAN DEFAULT TRUE,
+  is_active BOOLEAN DEFAULT TRUE,
+  position INTEGER DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
