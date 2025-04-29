@@ -1,21 +1,32 @@
 import { Router } from "express";
-import * as videoController from "./work.contrller";
+import {createVideo,
+  getAllVideos,
+  getAllVideosForWebsite,
+  getVideosById,
+  updateVideosById,
+  updateVideosPosition,
+  deleteVideoById,} from "./work.contrller";
 import auth from "../../midleware/authMidleware";
 import { validate } from "../../midleware/validate";
-import { workSchema } from "./wok.zod";
-const route = Router();
+import { VideoSchema } from "./wok.zod";
 
-route.post(
+const router = Router();
+
+router.post(
   "/works",
-  auth("ADMIN"),
-  validate(workSchema),
-  videoController.createVideo
+  // auth("ADMIN"),
+  validate(VideoSchema),
+  createVideo
 );
-route.get("/works", videoController.getAllVideos);
-route.get("/works/website", videoController.getAllVideosForWebsite);
-route.put("/works", videoController.updateVideosposition);
-route.get("/works/:id", videoController.getVideosById);
-route.put("/works/:id", videoController.updateVideosById);
-route.delete("/works/:id", videoController.updateVideosposition);
 
-export default route;
+router.get("/works/", getAllVideos);
+router.get("/works/website", getAllVideosForWebsite);
+router.get("/works/:id", getVideosById);
+router.put("/works/:id", updateVideosById);
+router.patch("/works/positions", updateVideosPosition);
+router.delete("/works/:id", deleteVideoById);
+
+
+
+
+export default router;

@@ -1,48 +1,49 @@
 import { db } from "../../db/db";
-import { errorLogger, logger } from "../../logger/logger";
+import { errorLogger } from "../../logger/logger";
 import { IVideo } from "./work.interface";
 
 export const VideosService = {
+  // CREATE
   async addVideo(data: IVideo) {
     try {
-      const lastdata = await db.query(
-        `SELECT * FROM Works ORDER BY position DESC LIMIT 1`
-      );
-      const newPosition =
-        lastdata.rows.length > 0 ? lastdata.rows[0].position + 1 : 1;
+      const lastdata = await db.query(`SELECT * FROM Works ORDER BY position DESC LIMIT 1`);
+      const newPosition = lastdata.rows.length > 0 ? lastdata.rows[0].position + 1 : 1;
+      
       const result = await db.query(
-        `INSERT INTO Works (title,description,thumbnail,video_link,is_visible,is_feature,position,type) VALUES ($1, $2, $3, $4, $5,$6,$7,$8) RETURNING *`,
+        `INSERT INTO Works (title, description, thumbnail, video_link, is_visible, is_feature, position, type, sub_type) 
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) 
+         RETURNING *`,
         [
           data.title,
           data.description,
           data.thumbnail,
           data.video_link,
-          data.isVisible || true,
-          (data.isFeature = false),
+          data.isVisible ?? true,
+          data.isFeature ?? false,
           newPosition,
           data.type,
+          data.subType || null,
         ]
       );
-      return result.rows || null;
+      return result.rows[0] || null;
     } catch (error) {
       errorLogger.error(error);
+      throw error;
     }
   },
+
+  // READ all
   async getAllVideos() {
-    // const cacheKey = "videos";
-    // const cashData = await getCache(cacheKey);
-    // if (cashData?.length > 0) return cashData;
-    const result = await db.query(`SELECT * FROM Works`);
-    // await setCache(cacheKey, result.rows);
+    const result = await db.query(`SELECT * FROM Works ORDER BY position ASC`);
     return result.rows;
   },
+
+  // READ by query
   async getAllVideosforWebsite(query: { id?: string; type?: string }) {
-    // const cacheKey = "videos";
-    // const cashData = await getCache(cacheKey);
-    // if (cashData?.length > 0) return cashData;
     let basedQuery = `SELECT * FROM Works`;
     const conditions = [];
     const values = [];
+
     if (query.id) {
       values.push(query.id);
       conditions.push(`id = $${values.length}`);
@@ -51,22 +52,58 @@ export const VideosService = {
       values.push(query.type);
       conditions.push(`type = $${values.length}`);
     }
-    if(conditions.length>0){
-      basedQuery += ` WHERE ` + conditions.join('AND')
+
+    if (conditions.length > 0) {
+      basedQuery += ` WHERE ` + conditions.join(' AND ');
     }
-    console.log(basedQuery)
-    const result = await db.query(basedQuery,values);
-    // await setCache(cacheKey, result.rows);
+
+    const result = await db.query(basedQuery, values);
     return result.rows;
   },
+
+  // READ by id
   async getVideosById(id: string) {
     const result = await db.query(`SELECT * FROM Works WHERE id = $1`, [id]);
-
-    return result.rows;
+    return result.rows[0] || null;
   },
+
+  // UPDATE single video
+  async updateVideo(id: string, data: Partial<IVideo>) {
+    try {
+      const fields = [];
+      const values = [];
+      let index = 1;
+
+      for (const key in data) {
+        fields.push(`${key} = $${index++}`);
+        values.push((data as any)[key]);
+      }
+
+      values.push(id); // last for WHERE id
+
+      const query = `UPDATE Works SET ${fields.join(", ")}, updated_at = CURRENT_TIMESTAMP WHERE id = $${index} RETURNING *`;
+      const result = await db.query(query, values);
+      return result.rows[0] || null;
+    } catch (error) {
+      errorLogger.error(error);
+      throw error;
+    }
+  },
+
+  // DELETE video
+  async deleteVideo(id: string) {
+    try {
+      const result = await db.query(`DELETE FROM Works WHERE id = $1 RETURNING *`, [id]);
+      return result.rows[0] || null;
+    } catch (error) {
+      errorLogger.error(error);
+      throw error;
+    }
+  },
+
+  // UPDATE Multiple video positions
   async updateVideosPositions(videos: IVideo[]) {
     try {
-      console.log(videos);
       const client = await db.connect();
       try {
         await client.query("BEGIN");
@@ -81,11 +118,13 @@ export const VideosService = {
       } catch (error) {
         await client.query("ROLLBACK");
         errorLogger.error(error);
+        throw error;
       } finally {
         client.release();
       }
     } catch (error) {
       errorLogger.error(error);
+      throw error;
     }
   },
 };

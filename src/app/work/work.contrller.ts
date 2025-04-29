@@ -3,102 +3,79 @@ import { asyncHandler } from "../../midleware/asyncHandler";
 import { responseHandler } from "../../utils/responseHandler";
 import { VideosService } from "./workservice";
 
+// CREATE
 export const createVideo = asyncHandler(
   async (req: Request, res: Response, _next: NextFunction) => {
-   
     const result = await VideosService.addVideo(req.body);
-
     if (result) {
-      return responseHandler(
-        res,
-        201,
-        true,
-        "Works created successfully",
-        result
-      );
+      return responseHandler(res, 201, true, "Works created successfully", result);
     }
-
     return responseHandler(res, 400, false, "Works creation failed");
   }
 );
 
+// READ ALL
 export const getAllVideos = asyncHandler(
-  async (_req: Request, res: Response, next: NextFunction) => {
+  async (_req: Request, res: Response) => {
     const result = await VideosService.getAllVideos();
-
     if (result) {
-      return responseHandler(
-        res,
-        200,
-        true,
-        "Works Retrive successfully",
-        result
-      );
+      return responseHandler(res, 200, true, "Works retrieved successfully", result);
     }
-    responseHandler(res, 400, false, "Works Retrive failed", result);
+    responseHandler(res, 400, false, "Works retrieve failed");
   }
 );
+
+// READ ALL (Website / Query based)
 export const getAllVideosForWebsite = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     const result = await VideosService.getAllVideosforWebsite(req.query);
-    console.log(req.query)
+    if (result) {
+      return responseHandler(res, 200, true, "Works retrieved successfully", result);
+    }
+    responseHandler(res, 400, false, "Works retrieve failed");
+  }
+);
 
-    if (result) {
-      return responseHandler(
-        res,
-        200,
-        true,
-        "Works Retrive successfully",
-        result
-      );
-    }
-    responseHandler(res, 400, false, "Works Retrive failed", result);
-  }
-);
+// READ BY ID
 export const getVideosById = asyncHandler(
-  async (req: Request, res: Response, _next: NextFunction) => {
+  async (req: Request, res: Response) => {
     const result = await VideosService.getVideosById(req.params.id);
     if (result) {
-      return responseHandler(
-        res,
-        200,
-        true,
-        "Works Retrive successfully",
-        result
-      );
+      return responseHandler(res, 200, true, "Work retrieved successfully", result);
     }
-    responseHandler(res, 400, false, "Works Retrive failed", result);
+    responseHandler(res, 404, false, "Work not found");
   }
 );
+
+// UPDATE BY ID ✅ (Fixed)
 export const updateVideosById = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const result = await VideosService.getVideosById(req.params.id);
+  async (req: Request, res: Response) => {
+    const result = await VideosService.updateVideo(req.params.id, req.body);
     if (result) {
-      return responseHandler(
-        res,
-        200,
-        true,
-        "Works Retrive successfully",
-        result
-      );
+      return responseHandler(res, 200, true, "Work updated successfully", result);
     }
-    responseHandler(res, 400, false, "Works Retrive failed", result);
+    responseHandler(res, 400, false, "Work update failed");
   }
 );
-export const updateVideosposition = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const result = await VideosService.updateVideosPositions(
-      req.body
-    );
+
+// UPDATE POSITIONS (multiple)
+export const updateVideosPosition = asyncHandler(
+  async (req: Request, res: Response) => {
+    const result = await VideosService.updateVideosPositions(req.body);
     if (result) {
-      return responseHandler(
-        res,
-        200,
-        true,
-        "Works update successfully",
-        result
-      );
+      return responseHandler(res, 200, true, "Video positions updated successfully", result);
     }
-    responseHandler(res, 400, false, "Works update failed", result);
+    responseHandler(res, 400, false, "Video position update failed");
+  }
+);
+
+// DELETE BY ID ✅ (Bonus)
+export const deleteVideoById = asyncHandler(
+  async (req: Request, res: Response) => {
+    const result = await VideosService.deleteVideo(req.params.id);
+    if (result) {
+      return responseHandler(res, 200, true, "Work deleted successfully", result);
+    }
+    responseHandler(res, 404, false, "Work not found or delete failed");
   }
 );
