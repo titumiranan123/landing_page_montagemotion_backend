@@ -36,6 +36,29 @@ export const VideosService = {
     // await setCache(cacheKey, result.rows);
     return result.rows;
   },
+  async getAllVideosforWebsite(query: { id?: string; type?: string }) {
+    // const cacheKey = "videos";
+    // const cashData = await getCache(cacheKey);
+    // if (cashData?.length > 0) return cashData;
+    let basedQuery = `SELECT * FROM Works`;
+    const conditions = [];
+    const values = [];
+    if (query.id) {
+      values.push(query.id);
+      conditions.push(`id = $${values.length}`);
+    }
+    if (query.type) {
+      values.push(query.type);
+      conditions.push(`type = $${values.length}`);
+    }
+    if(conditions.length>0){
+      basedQuery += ` WHERE ` + conditions.join('AND')
+    }
+    console.log(basedQuery)
+    const result = await db.query(basedQuery,values);
+    // await setCache(cacheKey, result.rows);
+    return result.rows;
+  },
   async getVideosById(id: string) {
     const result = await db.query(`SELECT * FROM Works WHERE id = $1`, [id]);
 
@@ -43,7 +66,7 @@ export const VideosService = {
   },
   async updateVideosPositions(videos: IVideo[]) {
     try {
-      console.log(videos)
+      console.log(videos);
       const client = await db.connect();
       try {
         await client.query("BEGIN");

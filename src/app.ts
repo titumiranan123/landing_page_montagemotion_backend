@@ -19,7 +19,7 @@ import uploadRoute from "./app/upload/upload.route";
 
 const app = express();
 app.use(cors({
-  origin:"http://localhost:3000",
+  origin:["http://localhost:5001",'http://localhost:5000'],
   methods:['GET','POST','PUT','PATCH','DELETE'],
   credentials:true
 }));
@@ -32,7 +32,6 @@ app.use("/api", headerRoute);
 app.use("/api", pricingRoute);
 app.use("/api/", testimonialRoute);
 app.use("/api", recentRoute);
-
 app.use("/api", AuthRoute);
 app.use("/api", contactRoute);
 app.use("/api", faqRouter);

@@ -27,7 +27,6 @@ export const packageFeatureService = {
       ]
     );
   },
-
   async updateFeature(featureId: string, feature: Partial<FeatureInput>) {
     const keys = Object.keys(feature);
     const values = Object.values(feature);
@@ -43,19 +42,16 @@ export const packageFeatureService = {
       [...values, featureId]
     );
   },
-
   async deleteFeature(featureId: string) {
     await db.query(`DELETE FROM package_features WHERE id = $1`, [featureId]);
   },
-
   async getFeaturesByPackageId(packageId: string) {
     const res = await db.query(
-      `SELECT id, feature, is_present, is_active, position FROM package_features WHERE package_id = $1 ORDER BY position ASC`,
+      `SELECT id, feature, is_present, is_active, position FROM package_features WHERE package_id = $1 AND is_active=true ORDER BY position ASC`,
       [packageId]
     );
     return res.rows;
   },
-
   async replaceAllFeatures(packageId: string, features: FeatureInput[]) {
     await db.query(`DELETE FROM package_features WHERE package_id = $1`, [
       packageId,
@@ -69,7 +65,7 @@ export const packageFeatureService = {
     packageId: string,
     features: { id: string; position: number }[]
   ) {
-   console.log(packageId,features)
+
     const updates: Promise<any>[] = [];
     for (const feat of features) {
     const existing = await db.query(

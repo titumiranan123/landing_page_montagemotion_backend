@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import { responseHandler } from "../../utils/responseHandler";
 import { asyncHandler } from "../../midleware/asyncHandler";
 import { faqService } from "./faq.services";
+import { faqItemService } from "./faqitem.service";
 
 export const createFaq = asyncHandler(async (req: Request, res: Response) => {
   const result = await faqService.createFaq(req.body);
@@ -40,4 +41,32 @@ export const deleteFaq = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
   const result = await faqService.deleteFaq(id);
   return responseHandler(res, 200, true, "FAQ deleted successfully", result);
+});
+
+// Create a FAQ Item
+export const createFaqItem = asyncHandler(async (req: Request, res: Response) => {
+  const { faqId, question, answer, is_visible, position } = req.body;
+  const result = await faqItemService.createFaqItem(faqId, { question, answer, is_visible, position });
+  return responseHandler(res, 201, true, "FAQ item created successfully", result);
+});
+
+// Update a FAQ Item
+export const updateFaqItem = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const result = await faqItemService.updateFaqItem(id, req.body);
+  return responseHandler(res, 200, true, "FAQ item updated successfully", result);
+});
+
+// Delete a FAQ Item
+export const deleteFaqItem = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const result = await faqItemService.deleteFaqItem(id);
+  return responseHandler(res, 200, true, "FAQ item deleted successfully", result);
+});
+
+// Get FAQ Items by FAQ ID
+export const getFaqItemsByFaqId = asyncHandler(async (req: Request, res: Response) => {
+  const { faqId } = req.params;
+  const result = await faqItemService.getFaqItemsByFaqId(faqId);
+  return responseHandler(res, 200, true, "FAQ items fetched successfully", result);
 });

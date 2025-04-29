@@ -10,7 +10,7 @@ export const packageService = {
     const lastPosition = positionResult.rows[0].max || 0;
     const newPosition = lastPosition + 1;
     const result = await db.query(
-      `INSERT INTO packages (is_visible, name, title, description, currency, price, unit, pricing_type, note, puchase_link, type,position)
+      `INSERT INTO packages (is_visible, name, title, description, currency, price, unit, pricing_type, note, purchase_link, type,position)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11,$12) RETURNING *`,
       [
         data.is_visible,
@@ -22,7 +22,7 @@ export const packageService = {
         data.unit,
         data.pricing_type,
         data.note,
-        data.puchase_link,
+        data.purchase_link,
         data.type,
         newPosition,
       ]
@@ -44,7 +44,7 @@ export const packageService = {
   },
 
   async getAllPackages(filter?: { type?: string; id?: string }) {
-    let baseQuery = `SELECT * FROM packages ORDER BY position ASC`;
+    let baseQuery = `SELECT * FROM packages  WHERE is_visible = true ORDER BY position ASC`;
     let conditions: string[] = [];
     const values: any[] = [];
 

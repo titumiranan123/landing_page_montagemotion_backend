@@ -12,6 +12,7 @@ route.post(
   videoController.createVideo
 );
 route.get("/works", videoController.getAllVideos);
+route.get("/works/website", videoController.getAllVideosForWebsite);
 route.put("/works", videoController.updateVideosposition);
 route.get("/works/:id", videoController.getVideosById);
 route.put("/works/:id", videoController.updateVideosById);

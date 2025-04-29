@@ -38,6 +38,23 @@ export const getAllVideos = asyncHandler(
     responseHandler(res, 400, false, "Works Retrive failed", result);
   }
 );
+export const getAllVideosForWebsite = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const result = await VideosService.getAllVideosforWebsite(req.query);
+    console.log(req.query)
+
+    if (result) {
+      return responseHandler(
+        res,
+        200,
+        true,
+        "Works Retrive successfully",
+        result
+      );
+    }
+    responseHandler(res, 400, false, "Works Retrive failed", result);
+  }
+);
 export const getVideosById = asyncHandler(
   async (req: Request, res: Response, _next: NextFunction) => {
     const result = await VideosService.getVideosById(req.params.id);

@@ -15,7 +15,7 @@ export interface IPackage {
   unit:string;
   features: IFeature[];
   note:string
-  puchase_link:string
+  purchase_link:string
   pricing_type:'single'|"combo"
   type: "main" |"shorts" | "talking" | "podcast" | "graphic" | "advertising" | "website" ; 
 }
