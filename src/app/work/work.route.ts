@@ -6,7 +6,6 @@ import {createVideo,
   updateVideosById,
   updateVideosPosition,
   deleteVideoById,} from "./work.contrller";
-import auth from "../../midleware/authMidleware";
 import { validate } from "../../midleware/validate";
 import { VideoSchema } from "./wok.zod";
 

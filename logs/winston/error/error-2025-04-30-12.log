@@ -1,0 +1,159 @@
+Wed Apr 30 2025 12:16 [landingpage] error: [
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "array",
+    "path": [],
+    "message": "Expected object, received array"
+  }
+]
+Wed Apr 30 2025 12:16 [landingpage] error: [
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "array",
+    "path": [],
+    "message": "Expected object, received array"
+  }
+]
+Wed Apr 30 2025 12:22 [landingpage] error: [
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "array",
+    "path": [],
+    "message": "Expected object, received array"
+  }
+]
+Wed Apr 30 2025 12:26 [landingpage] error: [
+  {
+    "code": "too_small",
+    "minimum": 20,
+    "type": "string",
+    "inclusive": true,
+    "exact": false,
+    "message": "Short description is too short",
+    "path": [
+      "short_description"
+    ]
+  },
+  {
+    "code": "too_small",
+    "minimum": 100,
+    "type": "string",
+    "inclusive": true,
+    "exact": false,
+    "message": "Description is too short",
+    "path": [
+      "description"
+    ]
+  }
+]
+Wed Apr 30 2025 12:27 [landingpage] error: [
+  {
+    "code": "too_small",
+    "minimum": 20,
+    "type": "string",
+    "inclusive": true,
+    "exact": false,
+    "message": "Short description is too short",
+    "path": [
+      "short_description"
+    ]
+  },
+  {
+    "code": "too_small",
+    "minimum": 100,
+    "type": "string",
+    "inclusive": true,
+    "exact": false,
+    "message": "Description is too short",
+    "path": [
+      "description"
+    ]
+  }
+]
+Wed Apr 30 2025 12:28 [landingpage] error: [
+  {
+    "code": "too_small",
+    "minimum": 20,
+    "type": "string",
+    "inclusive": true,
+    "exact": false,
+    "message": "Short description is too short",
+    "path": [
+      "short_description"
+    ]
+  },
+  {
+    "code": "too_small",
+    "minimum": 100,
+    "type": "string",
+    "inclusive": true,
+    "exact": false,
+    "message": "Description is too short",
+    "path": [
+      "description"
+    ]
+  }
+]
+Wed Apr 30 2025 12:29 [landingpage] error: [
+  {
+    "code": "too_small",
+    "minimum": 100,
+    "type": "string",
+    "inclusive": true,
+    "exact": false,
+    "message": "Description is too short",
+    "path": [
+      "description"
+    ]
+  }
+]
+Wed Apr 30 2025 12:30 [landingpage] error: column "slug" of relation "blogs" does not exist
+Wed Apr 30 2025 12:44 [landingpage] error: [
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "array",
+    "path": [],
+    "message": "Expected object, received array"
+  }
+]
+Wed Apr 30 2025 12:55 [landingpage] error: [
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "array",
+    "path": [],
+    "message": "Expected object, received array"
+  }
+]
+Wed Apr 30 2025 12:56 [landingpage] error: [
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "array",
+    "path": [],
+    "message": "Expected object, received array"
+  }
+]
+Wed Apr 30 2025 12:57 [landingpage] error: Connection terminated due to connection timeout
+Wed Apr 30 2025 12:58 [landingpage] error: [
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "array",
+    "path": [],
+    "message": "Expected object, received array"
+  }
+]
+Wed Apr 30 2025 12:59 [landingpage] error: [
+  {
+    "code": "invalid_type",
+    "expected": "object",
+    "received": "array",
+    "path": [],
+    "message": "Expected object, received array"
+  }
+]

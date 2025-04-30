@@ -16,6 +16,8 @@ import faqRouter from "./app/faq/faq.routes";
 import stateRouter from "./app/state/state.routes";
 import serviceRoute from "./app/services/service.route";
 import uploadRoute from "./app/upload/upload.route";
+import aboutRoute from "./app/about/about.route";
+import blogRoute from "./app/blogs/blog.route";
 
 const app = express();
 app.use(cors({
@@ -37,6 +39,8 @@ app.use("/api", contactRoute);
 app.use("/api", faqRouter);
 app.use("/api", stateRouter);
 app.use("/api", serviceRoute);
+app.use("/api", aboutRoute);
+app.use("/api", blogRoute);
 app.use("/api", uploadRoute);
 
 app.get("/", (_req, res) => {

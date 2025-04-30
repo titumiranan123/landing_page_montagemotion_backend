@@ -1,7 +1,7 @@
 CREATE TABLE about (
-  id SERIAL PRIMARY KEY,
+  id PRIMARY KEY DEFAULT gen_random_uuid(),
   title TEXT NOT NULL,
   description TEXT,
   image TEXT,
-  isPublish VARCHAR(10) DEFAULT 'false'
+
 );
