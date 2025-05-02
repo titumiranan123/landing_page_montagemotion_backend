@@ -3,48 +3,67 @@ import { errorLogger } from "../../logger/logger";
 import { IFaq } from "./faq.interfac";
 import { faqItemService } from "./faqitem.service";
 
-
 const checkFaqExists = async (id: string) => {
   const res = await db.query(`SELECT 1 FROM faqs WHERE id = $1`, [id]);
   if (res.rowCount === 0) throw new Error("FAQ not found");
 };
 
 export const faqService = {
-  async createFaq(data: IFaq) {
+  async createOrUpdateFaq(data: IFaq) {
     const client = await db.connect();
     try {
-      await client.query('BEGIN');
-
-      const faqResult = await client.query(
-        `INSERT INTO faqs (title, sub_title, is_visible, type) VALUES ($1, $2, $3, $4) RETURNING *`,
-        [data.title, data.sub_title, data.is_visible, data.type]
+      await client.query("BEGIN");
+  
+      // Check if FAQ with the same type exists
+      const existingFaqResult = await client.query(
+        `SELECT * FROM faqs WHERE type = $1`,
+        [data.type]
       );
-
-      const faqId = faqResult.rows[0].id;
-
-      for (const item of data.faqs) {
-        await client.query(
-          `INSERT INTO faq_items (faq_id, question, answer, is_visible, position) VALUES ($1, $2, $3, $4, $5)`,
-          [faqId, item.question, item.answer, item.is_visible, item.position]
+  
+      let faqId: string
+      let faqResult;
+  
+      if (existingFaqResult.rows.length > 0) {
+        // Update existing FAQ
+        faqId = existingFaqResult.rows[0].id;
+        faqResult = await client.query(
+          `UPDATE faqs SET title = $1, sub_title = $2, is_visible = $3 WHERE id = $4 RETURNING *`,
+          [data.title, data.sub_title, data.is_visible, faqId]
         );
+  
+        // Delete old faq_items before adding new ones
+        await client.query(`DELETE FROM faq_items WHERE faq_id = $1`, [faqId]);
+      } else {
+        // Insert new FAQ
+        faqResult = await client.query(
+          `INSERT INTO faqs (title, sub_title, is_visible, type) VALUES ($1, $2, $3, $4) RETURNING *`,
+          [data.title, data.sub_title, data.is_visible, data.type]
+        );
+        faqId = faqResult.rows[0].id;
       }
-
-      await client.query('COMMIT');
+  
+      // Insert all faq_items again
+      for (const item of data.faqs) {
+        await faqItemService.createFaqItem(client, faqId, item);
+      }
+  
+      await client.query("COMMIT");
       return faqResult.rows[0];
     } catch (error) {
-      await client.query('ROLLBACK');
+      await client.query("ROLLBACK");
       errorLogger.error(error);
-      throw new Error("Failed to create FAQ");
+      throw new Error("Failed to create or update FAQ");
     } finally {
       client.release();
     }
-  },
+  }
+,  
 
   async updateFaq(id: string, data: Partial<IFaq>) {
     await checkFaqExists(id);
     const client = await db.connect();
     try {
-      await client.query('BEGIN');
+      await client.query("BEGIN");
 
       await client.query(
         `UPDATE faqs 
@@ -70,10 +89,10 @@ export const faqService = {
         }
       }
 
-      await client.query('COMMIT');
+      await client.query("COMMIT");
       return { message: "FAQ updated successfully" };
     } catch (error) {
-      await client.query('ROLLBACK');
+      await client.query("ROLLBACK");
       errorLogger.error(error);
       throw new Error("Failed to update FAQ");
     } finally {
@@ -102,12 +121,9 @@ export const faqService = {
 
     const result = await db.query(query, values);
 
-
     for (const faq of result.rows) {
       faq.faqs = await faqItemService.getFaqItemsByFaqId(faq.id);
     }
-
-
 
     return result.rows || [];
   },
@@ -118,18 +134,26 @@ export const faqService = {
 
     const faq = faqResult.rows[0];
 
-    const itemsResult = await db.query(`SELECT * FROM faq_items WHERE faq_id = $1 ORDER BY position ASC`, [id]);
+    const itemsResult = await db.query(
+      `SELECT * FROM faq_items WHERE faq_id = $1 ORDER BY position ASC`,
+      [id]
+    );
     faq.faqs = itemsResult.rows;
 
     return faq;
   },
 
   async getFaqByType(type: string) {
-    const faqResult = await db.query(`SELECT * FROM faqs WHERE type = $1`, [type]);
+    const faqResult = await db.query(`SELECT * FROM faqs WHERE type = $1`, [
+      type,
+    ]);
     const faqs = faqResult.rows;
 
     for (const faq of faqs) {
-      const itemsResult = await db.query(`SELECT * FROM faq_items WHERE faq_id = $1 ORDER BY position ASC`, [faq.id]);
+      const itemsResult = await db.query(
+        `SELECT * FROM faq_items WHERE faq_id = $1 ORDER BY position ASC`,
+        [faq.id]
+      );
       faq.faqs = itemsResult.rows;
     }
 
@@ -138,7 +162,10 @@ export const faqService = {
 
   async deleteFaq(id: string) {
     await checkFaqExists(id);
-    const result = await db.query(`DELETE FROM faqs WHERE id = $1 RETURNING *`, [id]);
+    const result = await db.query(
+      `DELETE FROM faqs WHERE id = $1 RETURNING *`,
+      [id]
+    );
     return result.rows[0];
   },
 };

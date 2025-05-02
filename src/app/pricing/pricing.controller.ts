@@ -21,6 +21,7 @@ export const getPackageById = asyncHandler(async (req: Request, res: Response) =
 });
 
 export const updatePackage = asyncHandler(async (req: Request, res: Response) => {
+  console.log(req.body)
   const result = await packageService.updatePackage(req.params.id, req.body);
   return responseHandler(res, 200, true, "Package updated", result);
 });

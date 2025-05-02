@@ -11,9 +11,7 @@ import {
   updatePackagePosition,
   updateFeauterPosition,
 } from "./pricing.controller";
-
 const router = Router();
-
 // Package routes
 router.post("/pricing/", createPackage);
 router.get("/pricing/", getAllPackages);
@@ -27,5 +25,4 @@ router.post("/pricing/:packageId/feature", addFeature);           // Add single 
 router.patch("/pricing/feature/:featureId", updateFeature);         // Update single feature by ID
 router.put("/pricing/feature/:packageId", updateFeauterPosition);         // Update single feature by ID
 router.delete("/pricing/feature/:featureId", deleteFeature);      // Delete single feature by ID
-
 export default router;
