@@ -7,7 +7,7 @@ import auth from "../../midleware/authMidleware";
 
 const router = Router();
 
-router.post("/faq",validate(faqSchema),auth('ADMIN') ,createFaq);
+router.post("/faq",validate(faqSchema) ,createFaq);
 router.patch("/faq/:id", updateFaq);
 router.get("/faq", getAllFaqs);
 router.get("/faq:id", getFaqById);

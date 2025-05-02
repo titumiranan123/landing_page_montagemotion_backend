@@ -18,6 +18,7 @@ import serviceRoute from "./app/services/service.route";
 import uploadRoute from "./app/upload/upload.route";
 import aboutRoute from "./app/about/about.route";
 import blogRoute from "./app/blogs/blog.route";
+import webRoute from "./app/homeapis/homeapi.routes";
 
 const app = express();
 app.use(cors({
@@ -41,6 +42,7 @@ app.use("/api", stateRouter);
 app.use("/api", serviceRoute);
 app.use("/api", aboutRoute);
 app.use("/api", blogRoute);
+app.use("/api", webRoute);
 app.use("/api", uploadRoute);
 
 app.get("/", (_req, res) => {
