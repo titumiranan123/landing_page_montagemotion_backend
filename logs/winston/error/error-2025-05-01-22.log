@@ -1,0 +1,11 @@
+Thu May 01 2025 22:32 [landingpage] error: [
+  {
+    "code": "invalid_type",
+    "expected": "boolean",
+    "received": "array",
+    "path": [
+      "isPublish"
+    ],
+    "message": "isPublish must be a boolean"
+  }
+]

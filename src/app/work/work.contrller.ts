@@ -50,6 +50,7 @@ export const getVideosById = asyncHandler(
 // UPDATE BY ID ✅ (Fixed)
 export const updateVideosById = asyncHandler(
   async (req: Request, res: Response) => {
+    console.log(req.body)
     const result = await VideosService.updateVideo(req.params.id, req.body);
     if (result) {
       return responseHandler(res, 200, true, "Work updated successfully", result);

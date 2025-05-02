@@ -21,7 +21,7 @@ router.post(
 router.get("/works/", getAllVideos);
 router.get("/works/website", getAllVideosForWebsite);
 router.get("/works/:id", getVideosById);
-router.put("/works/:id", updateVideosById);
+router.post("/works/:id", updateVideosById);
 router.patch("/works/positions", updateVideosPosition);
 router.delete("/works/:id", deleteVideoById);
 

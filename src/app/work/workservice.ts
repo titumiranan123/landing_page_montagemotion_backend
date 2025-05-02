@@ -18,8 +18,8 @@ export const VideosService = {
           data.description,
           data.thumbnail,
           data.video_link,
-          data.isVisible ?? true,
-          data.isFeature ?? false,
+          data.is_visible ?? true,
+          data.is_feature ?? false,
           newPosition,
           data.type,
           data.subType || null,
@@ -69,6 +69,7 @@ export const VideosService = {
 
   // UPDATE single video
   async updateVideo(id: string, data: Partial<IVideo>) {
+    console.log(data)
     try {
       const fields = [];
       const values = [];
@@ -81,7 +82,7 @@ export const VideosService = {
 
       values.push(id); // last for WHERE id
 
-      const query = `UPDATE Works SET ${fields.join(", ")}, updated_at = CURRENT_TIMESTAMP WHERE id = $${index} RETURNING *`;
+      const query = `UPDATE Works SET ${fields.join(", ")} WHERE id = $${index} RETURNING *`;
       const result = await db.query(query, values);
       return result.rows[0] || null;
     } catch (error) {

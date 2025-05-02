@@ -3,5 +3,7 @@ export interface IService {
     description:string
     image:string
     isPublish:string
+    href:string
     position:number
+    is_active:boolean
 }

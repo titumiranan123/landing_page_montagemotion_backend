@@ -4,8 +4,8 @@ export interface IVideo {
   description: string;
   thumbnail: string;
   video_link: string;
-  isVisible: boolean;
-  isFeature: boolean;
+  is_visible: boolean;
+  is_feature: boolean;
   position?: number;
   type: 
     | "main"
