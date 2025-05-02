@@ -8,7 +8,8 @@
     "lint:fix": "eslint . --ext .js,.ts --fix",
     "prettier:check": "prettier --ignore-path .gitignore --check \"**/*.+(js|ts)\"",
     "prettier:fix": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts)\"",
-    "lint-staged": "lint-staged"
+    "lint-staged": "lint-staged",
+    "prepare": "husky"
   },
   "lint-staged": {
     "src/**/*.{js,ts,jsx,tsx}": [
