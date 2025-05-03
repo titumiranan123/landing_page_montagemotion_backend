@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { db } from "../../db/db";
 import { errorLogger } from "../../logger/logger";
 import { IVideo } from "./work.interface";
@@ -6,9 +7,12 @@ export const VideosService = {
   // CREATE
   async addVideo(data: IVideo) {
     try {
-      const lastdata = await db.query(`SELECT * FROM Works ORDER BY position DESC LIMIT 1`);
-      const newPosition = lastdata.rows.length > 0 ? lastdata.rows[0].position + 1 : 1;
-      
+      const lastdata = await db.query(
+        `SELECT * FROM Works ORDER BY position DESC LIMIT 1`,
+      );
+      const newPosition =
+        lastdata.rows.length > 0 ? lastdata.rows[0].position + 1 : 1;
+
       const result = await db.query(
         `INSERT INTO Works (title, description, thumbnail, video_link, is_visible, is_feature, position, type, sub_type) 
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) 
@@ -23,7 +27,7 @@ export const VideosService = {
           newPosition,
           data.type,
           data.subType || null,
-        ]
+        ],
       );
       return result.rows[0] || null;
     } catch (error) {
@@ -54,7 +58,7 @@ export const VideosService = {
     }
 
     if (conditions.length > 0) {
-      basedQuery += ` WHERE ` + conditions.join(' AND ');
+      basedQuery += ` WHERE ` + conditions.join(" AND ");
     }
 
     const result = await db.query(basedQuery, values);
@@ -69,7 +73,6 @@ export const VideosService = {
 
   // UPDATE single video
   async updateVideo(id: string, data: Partial<IVideo>) {
-    console.log(data)
     try {
       const fields = [];
       const values = [];
@@ -94,7 +97,10 @@ export const VideosService = {
   // DELETE video
   async deleteVideo(id: string) {
     try {
-      const result = await db.query(`DELETE FROM Works WHERE id = $1 RETURNING *`, [id]);
+      const result = await db.query(
+        `DELETE FROM Works WHERE id = $1 RETURNING *`,
+        [id],
+      );
       return result.rows[0] || null;
     } catch (error) {
       errorLogger.error(error);

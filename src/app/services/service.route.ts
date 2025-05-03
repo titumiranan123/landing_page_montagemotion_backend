@@ -13,7 +13,12 @@ import { createServiceSchema } from "./service.zod";
 
 const router = express.Router();
 
-router.post("/service", auth("ADMIN"),validate(createServiceSchema), createService);
+router.post(
+  "/service",
+  auth("ADMIN"),
+  validate(createServiceSchema),
+  createService,
+);
 router.get("/service", getAllServices);
 router.get("/service/:id", getServiceById);
 router.patch("/service/:id", updateService);

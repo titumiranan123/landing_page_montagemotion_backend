@@ -1,6 +1,5 @@
 import { Router } from "express";
 import {
-  checkAuth,
   createUser,
   deleteUser,
   handleAllUser,

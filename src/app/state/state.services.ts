@@ -1,6 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { db } from "../../db/db";
 import { IState } from "./state.interface";
-
 
 export const stateService = {
   async createState(data: IState) {
@@ -8,7 +8,7 @@ export const stateService = {
       `INSERT INTO states (isActive, states, type)
        VALUES ($1, $2, $3)
        RETURNING *`,
-      [data.isActive, JSON.stringify(data.states), data.type]
+      [data.isActive, JSON.stringify(data.states), data.type],
     );
     return result.rows[0];
   },
@@ -28,7 +28,10 @@ export const stateService = {
     }
 
     const whereClause = filters.length ? `WHERE ${filters.join(" AND ")}` : "";
-    const result = await db.query(`SELECT * FROM states ${whereClause}`, values);
+    const result = await db.query(
+      `SELECT * FROM states ${whereClause}`,
+      values,
+    );
     return result.rows;
   },
 
@@ -51,14 +54,17 @@ export const stateService = {
       `UPDATE states
        SET isActive = $1, states = $2, type = $3
        WHERE id = $4 RETURNING *`,
-      [merged.isActive, merged.states, merged.type, id]
+      [merged.isActive, merged.states, merged.type, id],
     );
 
     return result.rows[0];
   },
 
   async deleteState(id: string) {
-    const result = await db.query(`DELETE FROM states WHERE id = $1 RETURNING *`, [id]);
+    const result = await db.query(
+      `DELETE FROM states WHERE id = $1 RETURNING *`,
+      [id],
+    );
     return result.rows[0];
   },
 };

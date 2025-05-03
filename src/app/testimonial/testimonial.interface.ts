@@ -3,8 +3,15 @@ export interface ITestimonial {
   name: string;
   designation: string;
   message?: string;
-  image:string
+  image: string;
   video_message?: string;
   position?: number;
-  type: "main" |"shorts" | "talking" | "podcast" | "graphic" | "advertising" | "website" ; 
+  type:
+    | "main"
+    | "shorts"
+    | "talking"
+    | "podcast"
+    | "graphic"
+    | "advertising"
+    | "website";
 }

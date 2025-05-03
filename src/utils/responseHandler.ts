@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Response } from "express";
 
 export const responseHandler = (
@@ -5,7 +6,7 @@ export const responseHandler = (
   statusCode: number,
   success: boolean,
   message: string,
-  data?: any
+  data?: any,
 ) => {
   return res.status(statusCode).json({
     success: success,

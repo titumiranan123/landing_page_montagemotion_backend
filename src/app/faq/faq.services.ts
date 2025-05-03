@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { db } from "../../db/db";
 import { errorLogger } from "../../logger/logger";
 import { IFaq } from "./faq.interfac";
@@ -13,40 +14,40 @@ export const faqService = {
     const client = await db.connect();
     try {
       await client.query("BEGIN");
-  
+
       // Check if FAQ with the same type exists
       const existingFaqResult = await client.query(
         `SELECT * FROM faqs WHERE type = $1`,
-        [data.type]
+        [data.type],
       );
-  
-      let faqId: string
+
+      let faqId: string;
       let faqResult;
-  
+
       if (existingFaqResult.rows.length > 0) {
         // Update existing FAQ
         faqId = existingFaqResult.rows[0].id;
         faqResult = await client.query(
           `UPDATE faqs SET title = $1, sub_title = $2, is_visible = $3 WHERE id = $4 RETURNING *`,
-          [data.title, data.sub_title, data.is_visible, faqId]
+          [data.title, data.sub_title, data.is_visible, faqId],
         );
-  
+
         // Delete old faq_items before adding new ones
         await client.query(`DELETE FROM faq_items WHERE faq_id = $1`, [faqId]);
       } else {
         // Insert new FAQ
         faqResult = await client.query(
           `INSERT INTO faqs (title, sub_title, is_visible, type) VALUES ($1, $2, $3, $4) RETURNING *`,
-          [data.title, data.sub_title, data.is_visible, data.type]
+          [data.title, data.sub_title, data.is_visible, data.type],
         );
         faqId = faqResult.rows[0].id;
       }
-  
+
       // Insert all faq_items again
       for (const item of data.faqs) {
         await faqItemService.createFaqItem(client, faqId, item);
       }
-  
+
       await client.query("COMMIT");
       return faqResult.rows[0];
     } catch (error) {
@@ -56,9 +57,7 @@ export const faqService = {
     } finally {
       client.release();
     }
-  }
-,  
-
+  },
   async updateFaq(id: string, data: Partial<IFaq>) {
     await checkFaqExists(id);
     const client = await db.connect();
@@ -73,7 +72,7 @@ export const faqService = {
              type = COALESCE($4, type),
              updated_at = NOW()
          WHERE id = $5`,
-        [data.title, data.sub_title, data.is_visible, data.type, id]
+        [data.title, data.sub_title, data.is_visible, data.type, id],
       );
 
       if (data.faqs && data.faqs.length > 0) {
@@ -84,7 +83,7 @@ export const faqService = {
         for (const item of data.faqs) {
           await client.query(
             `INSERT INTO faq_items (faq_id, question, answer, is_visible, position) VALUES ($1, $2, $3, $4, $5)`,
-            [id, item.question, item.answer, item.is_visible, item.position]
+            [id, item.question, item.answer, item.is_visible, item.position],
           );
         }
       }
@@ -136,7 +135,7 @@ export const faqService = {
 
     const itemsResult = await db.query(
       `SELECT * FROM faq_items WHERE faq_id = $1 ORDER BY position ASC`,
-      [id]
+      [id],
     );
     faq.faqs = itemsResult.rows;
 
@@ -152,7 +151,7 @@ export const faqService = {
     for (const faq of faqs) {
       const itemsResult = await db.query(
         `SELECT * FROM faq_items WHERE faq_id = $1 ORDER BY position ASC`,
-        [faq.id]
+        [faq.id],
       );
       faq.faqs = itemsResult.rows;
     }
@@ -164,7 +163,7 @@ export const faqService = {
     await checkFaqExists(id);
     const result = await db.query(
       `DELETE FROM faqs WHERE id = $1 RETURNING *`,
-      [id]
+      [id],
     );
     return result.rows[0];
   },

@@ -5,7 +5,6 @@
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only ./src/app.ts",
     "lint:check": "eslint . --ext .js,.ts",
-    "lint:fix": "eslint . --ext .js,.ts --fix",
     "prettier:check": "prettier --ignore-path .gitignore --check \"**/*.+(js|ts)\"",
     "prettier:fix": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts)\"",
     "lint-staged": "lint-staged",
@@ -13,7 +12,6 @@
   },
   "lint-staged": {
     "src/**/*.{js,ts,jsx,tsx}": [
-      "npm run lint:fix",
       "npm run lint:check",
       "npm run prettier:fix",
       "npm run prettier:check"
@@ -44,6 +42,7 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@eslint/js": "^9.26.0",
     "@types/cookie-parser": "^1.4.8",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.1",
@@ -51,9 +50,13 @@
     "@types/jsonwebtoken": "^9.0.9",
     "@types/multer": "^1.4.12",
     "@types/nodemailer": "^6.4.17",
-    "@types/passport": "^1.0.17",
-    "@types/passport-local": "^1.0.38",
     "@types/pg": "^8.11.11",
-    "typescript": "^5.8.2"
+    "eslint": "^9.26.0",
+    "globals": "^16.0.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.1",
+    "prettier": "3.5.3",
+    "typescript": "^5.8.2",
+    "typescript-eslint": "^8.31.1"
   }
 }

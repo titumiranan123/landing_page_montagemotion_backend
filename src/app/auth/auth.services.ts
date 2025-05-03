@@ -26,7 +26,7 @@ export const authService = {
         throw new ApiError(
           400,
           false,
-          "Name, email, and password are required."
+          "Name, email, and password are required.",
         );
       }
 
@@ -40,7 +40,7 @@ export const authService = {
       const hashedPassword = await bcrypt.hash(password, 10);
       const verificationToken = generateVerificationCode();
       const verificationTokenExpiresAt = new Date(
-        Date.now() + 24 * 60 * 60 * 1000
+        Date.now() + 24 * 60 * 60 * 1000,
       );
 
       const createUserQuery = `
@@ -103,7 +103,7 @@ export const authService = {
          WHERE verification_token = $1 
          AND verification_token_expires_at > NOW() 
          FOR UPDATE LIMIT 1`,
-        [code]
+        [code],
       );
 
       if (res.rowCount === 0) {
@@ -118,7 +118,7 @@ export const authService = {
          SET verified = true, status = 'active' 
          WHERE id = $1 
          RETURNING id, name, email, verified, status`,
-        [userId]
+        [userId],
       );
 
       if (updateUser.rowCount === 0) {
@@ -130,7 +130,7 @@ export const authService = {
         `UPDATE user_dynamic_data 
          SET verification_token = NULL, verification_token_expires_at = NULL 
          WHERE user_id = $1`,
-        [userId]
+        [userId],
       );
 
       await client.query("COMMIT");
@@ -148,14 +148,14 @@ export const authService = {
 
   async login(
     data: { email: string; password: string },
-    logData: Partial<UserLoginHistory>
+    logData: Partial<UserLoginHistory>,
   ) {
     const client = await db.connect();
     let loginSuccessful = false;
     try {
       const result = await client.query(
         `SELECT * FROM users WHERE email = $1`,
-        [data.email]
+        [data.email],
       );
 
       if (result.rowCount === 0) {
@@ -184,7 +184,7 @@ export const authService = {
           role: user.role,
         },
         config.jwt_secret as string,
-        { expiresIn: "24h" }
+        { expiresIn: "24h" },
       );
 
       loginSuccessful = true;
@@ -232,7 +232,7 @@ export const authService = {
         } catch (logError) {
           errorLogger.error(
             "Failed to log unsuccessful login attempt:",
-            logError
+            logError,
           );
         }
       }
@@ -243,7 +243,7 @@ export const authService = {
   async allUsers() {
     try {
       const res = await db.query(
-        "SELECT id, name, email, role, verified, status FROM users"
+        "SELECT id, name, email, role, verified, status FROM users",
       );
       return res.rows;
     } catch (error: any) {
@@ -259,7 +259,7 @@ export const authService = {
 
       const res = await client.query(
         `UPDATE users SET role = 'ADMIN' WHERE id = $1 RETURNING id, name, email, role`,
-        [id]
+        [id],
       );
 
       if (res.rowCount === 0) {
@@ -274,7 +274,7 @@ export const authService = {
       throw new ApiError(
         400,
         false,
-        error.message || "Failed to update user role"
+        error.message || "Failed to update user role",
       );
     } finally {
       client.release();
@@ -324,7 +324,7 @@ export const authService = {
       // Then delete the user
       const res = await client.query(
         `DELETE FROM users WHERE id = $1 RETURNING id`,
-        [id]
+        [id],
       );
 
       if (res.rowCount === 0) {

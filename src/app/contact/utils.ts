@@ -4,8 +4,8 @@ export async function sendEmailToAdmin(contact: IContact) {
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: "titumiranan.gtc@gmail.com", 
-      pass: "lmke ziod tysh bcgo", 
+      user: "titumiranan.gtc@gmail.com",
+      pass: "lmke ziod tysh bcgo",
     },
   });
 

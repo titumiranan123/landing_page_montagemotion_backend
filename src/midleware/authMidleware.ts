@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextFunction, Request, Response } from "express";
 import ApiError from "../utils/ApiError";
 import { jwtHelpers } from "./jwtHelper";
 import config from "../config";
+import { errorLogger } from "../logger/logger";
 
 const auth =
   (...requiredRoles: string[]) =>
@@ -21,9 +23,10 @@ const auth =
       try {
         verifiedUser = jwtHelpers.verifyToken(
           token,
-          config.jwt_secret as string
+          config.jwt_secret as string,
         );
       } catch (error) {
+        errorLogger.error(error);
         throw new ApiError(401, false, "Invalid or expired token");
       }
 

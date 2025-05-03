@@ -1,6 +1,6 @@
 import { Pool } from "pg";
 import config from "../config";
-import { logger } from "../logger/logger";
+import { errorLogger, logger } from "../logger/logger";
 export const db = new Pool({
   host: config.db_hostname,
   port: 5432,
@@ -13,21 +13,21 @@ export const db = new Pool({
 });
 
 db.on("error", (err) => {
-  console.log(err);
+  errorLogger.error(err);
   reconnect();
 });
 logger.info("📦 Connected to PostgreSQL");
 const reconnect = (): void => {
   setTimeout(() => {
     db.connect().catch((err) => {
-      console.log("reconnect failed", err);
+      errorLogger.error("reconnect failed", err);
     });
   }, 5000);
 };
 process.on("SIGINT", async () => {
   if (db) {
     await db.end();
-    console.log("🔌 PostgreSQL connection closed.");
+    logger.info("🔌 PostgreSQL connection closed.");
   }
   process.exit(0);
 });

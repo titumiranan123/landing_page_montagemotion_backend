@@ -1,13 +1,12 @@
 import { db } from "../../db/db";
 import { errorLogger } from "../../logger/logger";
-import { getCache, setCache } from "../../utils/cache";
 import { ITestimonial } from "./testimonial.interface";
 
 export const testimonialService = {
   async addTestimonial(data: ITestimonial) {
     try {
       const lastdata = await db.query(
-        `SELECT * FROM testimonials ORDER BY position DESC LIMIT 1`
+        `SELECT * FROM testimonials ORDER BY position DESC LIMIT 1`,
       );
       const newPosition =
         lastdata.rows.length > 0 ? lastdata.rows[0].position + 1 : 1;
@@ -22,7 +21,7 @@ export const testimonialService = {
           data.video_message || "",
           newPosition,
           data.type,
-        ]
+        ],
       );
       return result.rows || null;
     } catch (error) {
@@ -30,9 +29,8 @@ export const testimonialService = {
     }
   },
   async getAllTestimonial() {
-    const cacheKey = "all_testimonial";
+    // const cacheKey = "all_testimonial";
     // const cashData = await getCache(cacheKey);
-    // console.log("cashData", cashData);
     // if (cashData) return cashData;
     const result = await db.query(`SELECT * FROM testimonials`);
     // await setCache(cacheKey, result.rows);
@@ -54,7 +52,7 @@ export const testimonialService = {
         for (const testimonial of testimonials) {
           await client.query(
             `UPDATE testimonials SET position = $1 WHERE id = $2`,
-            [testimonial.position, testimonial.id]
+            [testimonial.position, testimonial.id],
           );
         }
         await client.query("COMMIT");
@@ -69,7 +67,7 @@ export const testimonialService = {
       errorLogger.error(error);
     }
   },
-  async deleteTestimonialById(id:string){
-
-  }
+  async deleteTestimonialById(id: string) {
+    await db.query(`DELETE FROM testimonial WHERE id = $1`, [id]);
+  },
 };

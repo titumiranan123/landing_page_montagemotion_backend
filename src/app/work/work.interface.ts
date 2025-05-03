@@ -7,7 +7,7 @@ export interface IVideo {
   is_visible: boolean;
   is_feature: boolean;
   position?: number;
-  type: 
+  type:
     | "main"
     | "shorts"
     | "talking"
@@ -15,7 +15,7 @@ export interface IVideo {
     | "graphic"
     | "advertising"
     | "website";
-  subType?: 
+  subType?:
     | "full"
     | "short"
     | "hook"

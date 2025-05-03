@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { db } from "../../db/db";
 import { packageFeatureService } from "./package.service";
 import { IPackage } from "./pricing.interface";
@@ -5,7 +6,7 @@ import { IPackage } from "./pricing.interface";
 export const packageService = {
   async createPackage(data: IPackage) {
     const positionResult = await db.query(
-      `SELECT MAX(position) as max FROM packages`
+      `SELECT MAX(position) as max FROM packages`,
     );
     const lastPosition = positionResult.rows[0].max || 0;
     const newPosition = lastPosition + 1;
@@ -25,7 +26,7 @@ export const packageService = {
         data.purchase_link,
         data.type,
         newPosition,
-      ]
+      ],
     );
 
     const packageId = result.rows[0].id;
@@ -45,7 +46,7 @@ export const packageService = {
 
   async getAllPackages(filter?: { type?: string; id?: string }) {
     let baseQuery = `SELECT * FROM packages  WHERE is_visible = true ORDER BY position ASC`;
-    let conditions: string[] = [];
+    const conditions: string[] = [];
     const values: any[] = [];
 
     if (filter?.type) {
@@ -93,7 +94,7 @@ export const packageService = {
         updated.note,
         updated.type,
         id,
-      ]
+      ],
     );
 
     // Optional: Update feature list
@@ -103,7 +104,7 @@ export const packageService = {
         data.features.map((feature) => ({
           ...feature,
           is_present: feature.is_present === "true",
-        }))
+        })),
       );
     }
 
@@ -115,22 +116,19 @@ export const packageService = {
     await db.query(`DELETE FROM packages WHERE id = $1`, [id]);
     return { message: "Package deleted" };
   },
-  async updatPackagePosition( packages: { id: string; position: number }[]
-  ) {
-  
+  async updatPackagePosition(packages: { id: string; position: number }[]) {
     const updates: Promise<any>[] = [];
     for (const pkg of packages) {
       const existing = await db.query(
         `SELECT position FROM packages WHERE id = $1 `,
-        [pkg.id]
+        [pkg.id],
       );
-      
+
       const currentPosition = existing.rows[0]?.position;
-      console.log(currentPosition,pkg.position)
       if (currentPosition !== pkg.position) {
         const updateQuery = db.query(
           `UPDATE packages SET position = $1 WHERE id = $2`,
-          [pkg.position, pkg.id]
+          [pkg.position, pkg.id],
         );
         updates.push(updateQuery);
       }

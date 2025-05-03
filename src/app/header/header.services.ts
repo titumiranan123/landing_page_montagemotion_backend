@@ -1,6 +1,5 @@
 import { db } from "../../db/db";
 import { errorLogger } from "../../logger/logger";
-import { getCache, setCache } from "../../utils/cache";
 import { IHeader } from "./header.interface";
 
 export const headerVideoService = {
@@ -8,12 +7,12 @@ export const headerVideoService = {
     let client;
     try {
       client = await db.connect();
-      await client.query('BEGIN');
-  
+      await client.query("BEGIN");
+
       // First check if a header of this type already exists
       const existingHeader = await client.query(
         `SELECT id FROM headers WHERE type = $1 LIMIT 1`,
-        [data.type]
+        [data.type],
       );
 
       if (existingHeader.rows.length > 0) {
@@ -29,10 +28,10 @@ export const headerVideoService = {
             data.description,
             data.thumbnail,
             data.video_link,
-            data.type
-          ]
+            data.type,
+          ],
         );
-        await client.query('COMMIT');
+        await client.query("COMMIT");
         return result.rows[0] || null;
       } else {
         // Insert new header
@@ -47,15 +46,15 @@ export const headerVideoService = {
             data.thumbnail,
             data.video_link,
             true,
-            data.type
-          ]
+            data.type,
+          ],
         );
-        await client.query('COMMIT');
+        await client.query("COMMIT");
         return result.rows[0] || null;
       }
     } catch (error) {
       if (client) {
-        await client.query('ROLLBACK');
+        await client.query("ROLLBACK");
       }
       errorLogger.error(error);
       throw new Error("Failed to process header video.");
@@ -67,7 +66,7 @@ export const headerVideoService = {
   },
 
   async getAllHeadervideo() {
-    const cacheKey = "headervideo";
+    // const cacheKey = "headervideo";
     // const cacheData = await getCache(cacheKey);
     // if (cacheData?.length > 0) return cacheData;
     const result = await db.query(`SELECT * FROM headers`);
@@ -123,32 +122,31 @@ export const headerVideoService = {
   // }
   // },
   async updateHeadervideoById(data: IHeader, id: string) {
-    checkHeaders(id)
-   
+    checkHeaders(id);
+
     const result = await db.query(
       `UPDATE headers 
        SET thumbnail = $1, video_link = $2, isActive = $3, type = $4 
        WHERE id = $5 
        RETURNING *`,
-      [data.thumbnail, data.video_link, data.isActive, data.type, id]
+      [data.thumbnail, data.video_link, data.isActive, data.type, id],
     );
     return result.rows || null;
   },
   async deletHeadervideoById(id: string) {
-    checkHeaders(id)
-    const result = await db.query(`DELETE FROM headers WHERE id = $1 RETURNING * `, [
-      id,
-    ]);
+    checkHeaders(id);
+    const result = await db.query(
+      `DELETE FROM headers WHERE id = $1 RETURNING * `,
+      [id],
+    );
     return result.rows || null;
   },
-  
 };
 
 const checkHeaders = async (id: string) => {
   const res = await db.query(`SELECT 1 FROM headers WHERE id = $1`, [id]);
- 
+
   if (res.rowCount === 0) {
     throw new Error("Header not found");
   }
 };
-

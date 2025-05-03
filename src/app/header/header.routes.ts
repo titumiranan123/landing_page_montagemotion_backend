@@ -1,5 +1,5 @@
 import { Router } from "express";
-import * as headervideo from "./header.controllers"
+import * as headervideo from "./header.controllers";
 
 const router = Router();
 
@@ -10,8 +10,5 @@ router.get("/header", headervideo.getAllHeaderVideos);
 // router.patch("/header/active/:id", headervideo.updateHeaderVideoActive);
 // router.put("/header/:id", headervideo.updateHeaderVideo);
 // router.delete("/header/:id", headervideo.deleteHeaderVideo);
-
-
-
 
 export default router;

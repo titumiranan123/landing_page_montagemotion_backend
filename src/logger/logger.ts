@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createLogger, format, transports } from "winston";
 const { combine, timestamp, label, printf, prettyPrint } = format;
 import path from "path";
@@ -16,7 +17,7 @@ const logger = createLogger({
     label({ label: "landingpage" }),
     timestamp(),
     prettyPrint(),
-    myFormat
+    myFormat,
   ),
   transports: [
     new transports.Console(),
@@ -26,7 +27,7 @@ const logger = createLogger({
         "logs",
         "winston",
         "success",
-        "success-%DATE%.log"
+        "success-%DATE%.log",
       ),
       datePattern: "YYYY-MM-DD-HH",
       zippedArchive: true,
@@ -41,7 +42,7 @@ const errorLogger = createLogger({
     label({ label: "landingpage" }),
     timestamp(),
     prettyPrint(),
-    myFormat
+    myFormat,
   ),
   transports: [
     new transports.Console(),
@@ -51,7 +52,7 @@ const errorLogger = createLogger({
         "logs",
         "winston",
         "error",
-        "error-%DATE%.log"
+        "error-%DATE%.log",
       ),
       datePattern: "YYYY-MM-DD-HH",
       zippedArchive: true,

@@ -1,11 +1,11 @@
 export interface IState {
   id?: string;
-  isActive:boolean,
+  isActive: boolean;
   states: {
     title: string;
     count: number;
     unit: string;
-    isPublish:boolean
+    isPublish: boolean;
   }[];
   type:
     | "main"

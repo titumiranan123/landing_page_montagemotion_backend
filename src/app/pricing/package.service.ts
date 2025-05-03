@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { db } from "../../db/db";
 
 interface FeatureInput {
@@ -11,7 +12,7 @@ export const packageFeatureService = {
   async addFeature(packageId: string, feature: FeatureInput) {
     const positionResult = await db.query(
       `SELECT MAX(position) as max FROM package_features WHERE package_id = $1 `,
-      [packageId]
+      [packageId],
     );
     const lastPosition = positionResult.rows[0].max || 0;
     const newPosition = lastPosition + 1;
@@ -24,7 +25,7 @@ export const packageFeatureService = {
         feature.is_present,
         feature.is_active,
         newPosition,
-      ]
+      ],
     );
   },
   async updateFeature(featureId: string, feature: Partial<FeatureInput>) {
@@ -39,7 +40,7 @@ export const packageFeatureService = {
 
     await db.query(
       `UPDATE package_features SET ${setClause} WHERE id = $${keys.length + 1}`,
-      [...values, featureId]
+      [...values, featureId],
     );
   },
   async deleteFeature(featureId: string) {
@@ -48,7 +49,7 @@ export const packageFeatureService = {
   async getFeaturesByPackageId(packageId: string) {
     const res = await db.query(
       `SELECT id, feature, is_present, is_active, position FROM package_features WHERE package_id = $1 AND is_active=true ORDER BY position ASC`,
-      [packageId]
+      [packageId],
     );
     return res.rows;
   },
@@ -63,23 +64,22 @@ export const packageFeatureService = {
   },
   async updatFeaturePosition(
     packageId: string,
-    features: { id: string; position: number }[]
+    features: { id: string; position: number }[],
   ) {
-
     const updates: Promise<any>[] = [];
     for (const feat of features) {
-    const existing = await db.query(
-      `SELECT position FROM package_features WHERE id = $1 AND package_id = $2`,
-      [feat.id, packageId]
-    );
-    const currentPosition = existing.rows[0]?.position;
-    console.log(currentPosition , feat.position)
-    if (currentPosition !== feat.position) {
-      const updateQuery = db.query(
-        `UPDATE package_features SET position = $1 WHERE id = $2`,
-        [feat.position, feat.id]
+      const existing = await db.query(
+        `SELECT position FROM package_features WHERE id = $1 AND package_id = $2`,
+        [feat.id, packageId],
       );
-      updates.push(updateQuery);
-    }}
+      const currentPosition = existing.rows[0]?.position;
+      if (currentPosition !== feat.position) {
+        const updateQuery = db.query(
+          `UPDATE package_features SET position = $1 WHERE id = $2`,
+          [feat.position, feat.id],
+        );
+        updates.push(updateQuery);
+      }
+    }
   },
 };

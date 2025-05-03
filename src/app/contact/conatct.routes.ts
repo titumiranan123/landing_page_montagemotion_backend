@@ -2,7 +2,6 @@ import { Router } from "express";
 import * as contactController from "./contact.controller";
 import { validate } from "../../midleware/validate";
 import { contactSchema } from "./contact.zod";
-import { requireRole } from "../../utils/requireRole";
 const route = Router();
 
 route.post(

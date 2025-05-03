@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import redisClient from "../db/redis";
 
 export const setCache = async (key: string, value: any, expiry = 3600) => {

@@ -16,19 +16,21 @@ export const VideoSchema = z.object({
     "podcast",
     "graphic",
     "advertising",
-    "website"
+    "website",
   ]),
-  subType: z.enum([
-    "full",
-    "short",
-    "hook",
-    "thumbnail",
-    "poster",
-    "uiux_design",
-    "web_development",
-    "ovc",
-    "reels"
-  ]).optional(),
+  subType: z
+    .enum([
+      "full",
+      "short",
+      "hook",
+      "thumbnail",
+      "poster",
+      "uiux_design",
+      "web_development",
+      "ovc",
+      "reels",
+    ])
+    .optional(),
 });
 
 // export Type from Schema

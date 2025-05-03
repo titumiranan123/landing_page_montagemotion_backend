@@ -19,13 +19,16 @@ import uploadRoute from "./app/upload/upload.route";
 import aboutRoute from "./app/about/about.route";
 import blogRoute from "./app/blogs/blog.route";
 import webRoute from "./app/homeapis/homeapi.routes";
+import memberRoute from "./app/member/member.route";
 
 const app = express();
-app.use(cors({
-  origin:["http://localhost:5001",'http://localhost:5000'],
-  methods:['GET','POST','PUT','PATCH','DELETE'],
-  credentials:true
-}));
+app.use(
+  cors({
+    origin: ["http://localhost:5001", "http://localhost:5000"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    credentials: true,
+  }),
+);
 
 app.use(cookieParser());
 app.use(express.json());
@@ -43,13 +46,12 @@ app.use("/api", serviceRoute);
 app.use("/api", aboutRoute);
 app.use("/api", blogRoute);
 app.use("/api", webRoute);
+app.use("/api", memberRoute);
 app.use("/api", uploadRoute);
 
 app.get("/", (_req, res) => {
   res.send("connected");
 });
-
-
 
 app.use(globalErrorHandler);
 

@@ -1,25 +1,29 @@
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 import { asyncHandler } from "../../midleware/asyncHandler";
 import { responseHandler } from "../../utils/responseHandler";
 import { headerVideoService } from "./header.services";
 
-
-
 export const createHeaderVideo = asyncHandler(
-  async (req: Request, res: Response, _next: NextFunction) => {
+  async (req: Request, res: Response) => {
     const result = await headerVideoService.addHeaderVideo(req.body);
     if (result) {
-      return responseHandler(res, 201, true, "Header video created successfully", result);
+      return responseHandler(
+        res,
+        201,
+        true,
+        "Header video created successfully",
+        result,
+      );
     }
     return responseHandler(res, 400, false, "Header video creation failed");
-  }
+  },
 );
 
 export const getAllHeaderVideos = asyncHandler(
   async (_req: Request, res: Response) => {
     const result = await headerVideoService.getAllHeadervideo();
     return responseHandler(res, 200, true, "Fetched all header videos", result);
-  }
+  },
 );
 
 export const getHeaderVideoById = asyncHandler(
@@ -30,7 +34,7 @@ export const getHeaderVideoById = asyncHandler(
       return responseHandler(res, 200, true, "Header video fetched", result);
     }
     return responseHandler(res, 404, false, "Header video not found");
-  }
+  },
 );
 
 export const getHeaderVideoByType = asyncHandler(
@@ -38,15 +42,25 @@ export const getHeaderVideoByType = asyncHandler(
     const { type } = req.params;
     const result = await headerVideoService.getHeadervideoBytype(type);
     if (result?.length > 0) {
-      return responseHandler(res, 200, true, "Header video fetched by type", result);
+      return responseHandler(
+        res,
+        200,
+        true,
+        "Header video fetched by type",
+        result,
+      );
     }
-    return responseHandler(res, 404, false, "No header video found with this type");
-  }
+    return responseHandler(
+      res,
+      404,
+      false,
+      "No header video found with this type",
+    );
+  },
 );
 
 // export const updateHeaderVideoActive = asyncHandler(
 //   async (req: Request, res: Response) => {
-//     console.log("hitted")
 //     const { id } = req.params;
 //     const { nextActiveId } = req.body;
 //     const result = await headerVideoService.updateHeadervideoActive(nextActiveId, id);

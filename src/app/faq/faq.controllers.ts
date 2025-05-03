@@ -36,7 +36,7 @@ export const getFaqByType = asyncHandler(
     const { type } = req.params;
     const result = await faqService.getFaqByType(type);
     return responseHandler(res, 200, true, "FAQs fetched by type", result);
-  }
+  },
 );
 
 export const deleteFaq = asyncHandler(async (req: Request, res: Response) => {
@@ -59,9 +59,9 @@ export const createFaqItem = asyncHandler(
       201,
       true,
       "FAQ item created successfully",
-      result
+      result,
     );
-  }
+  },
 );
 
 // Update a FAQ Item
@@ -74,23 +74,22 @@ export const updateFaqItem = asyncHandler(
       200,
       true,
       "FAQ item updated successfully",
-      result
+      result,
     );
-  }
+  },
 );
 // Update a FAQ Item
 export const updateFaqItemPosition = asyncHandler(
   async (req: Request, res: Response) => {
-    
-    const result = await faqItemService.updateFaqItemPositions( req.body);
+    const result = await faqItemService.updateFaqItemPositions(req.body);
     return responseHandler(
       res,
       200,
       true,
       "FAQ item updated successfully",
-      result
+      result,
     );
-  }
+  },
 );
 
 // Delete a FAQ Item
@@ -103,9 +102,9 @@ export const deleteFaqItem = asyncHandler(
       200,
       true,
       "FAQ item deleted successfully",
-      result
+      result,
     );
-  }
+  },
 );
 
 // Get FAQ Items by FAQ ID
@@ -118,7 +117,7 @@ export const getFaqItemsByFaqId = asyncHandler(
       200,
       true,
       "FAQ items fetched successfully",
-      result
+      result,
     );
-  }
+  },
 );

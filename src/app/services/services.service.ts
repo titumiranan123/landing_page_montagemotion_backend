@@ -1,9 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { db } from "../../db/db";
 import { IService } from "./service.interface";
 
 export const serviceService = {
   async createService(data: IService) {
-    const positionResult = await db.query(`SELECT MAX(position) as max FROM services`);
+    const positionResult = await db.query(
+      `SELECT MAX(position) as max FROM services`,
+    );
     const lastPosition = positionResult.rows[0]?.max || 0;
     const newPosition = lastPosition + 1;
 
@@ -19,14 +22,16 @@ export const serviceService = {
         data.href,
         newPosition,
         data.is_active ?? true,
-      ]
+      ],
     );
 
     return result.rows[0];
   },
 
   async getAllServices() {
-    const result = await db.query(`SELECT * FROM services ORDER BY position ASC`);
+    const result = await db.query(
+      `SELECT * FROM services ORDER BY position ASC`,
+    );
     return result.rows;
   },
 
@@ -64,7 +69,7 @@ export const serviceService = {
         updated.position,
         updated.is_active,
         id,
-      ]
+      ],
     );
 
     return result.rows[0];
@@ -74,13 +79,16 @@ export const serviceService = {
     const updates: Promise<any>[] = [];
 
     for (const service of services) {
-      const existing = await db.query(`SELECT position FROM services WHERE id = $1`, [service.id]);
+      const existing = await db.query(
+        `SELECT position FROM services WHERE id = $1`,
+        [service.id],
+      );
       const currentPosition = existing.rows[0]?.position;
 
       if (currentPosition !== service.position) {
         const updateQuery = db.query(
           `UPDATE services SET position = $1 WHERE id = $2`,
-          [service.position, service.id]
+          [service.position, service.id],
         );
         updates.push(updateQuery);
       }
@@ -88,12 +96,17 @@ export const serviceService = {
 
     await Promise.all(updates);
 
-    const result = await db.query(`SELECT * FROM services ORDER BY position ASC`);
+    const result = await db.query(
+      `SELECT * FROM services ORDER BY position ASC`,
+    );
     return result.rows;
   },
 
   async deleteService(id: string) {
-    const result = await db.query(`DELETE FROM services WHERE id = $1 RETURNING *`, [id]);
+    const result = await db.query(
+      `DELETE FROM services WHERE id = $1 RETURNING *`,
+      [id],
+    );
     return result.rows[0] || null;
   },
 };

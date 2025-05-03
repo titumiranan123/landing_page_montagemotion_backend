@@ -21,8 +21,8 @@ router.put("/pricing/", updatePackagePosition);
 router.delete("/pricing/:id", deletePackage);
 
 // Feature routes
-router.post("/pricing/:packageId/feature", addFeature);           // Add single feature to a package
-router.patch("/pricing/feature/:featureId", updateFeature);         // Update single feature by ID
-router.put("/pricing/feature/:packageId", updateFeauterPosition);         // Update single feature by ID
-router.delete("/pricing/feature/:featureId", deleteFeature);      // Delete single feature by ID
+router.post("/pricing/:packageId/feature", addFeature); // Add single feature to a package
+router.patch("/pricing/feature/:featureId", updateFeature); // Update single feature by ID
+router.put("/pricing/feature/:packageId", updateFeauterPosition); // Update single feature by ID
+router.delete("/pricing/feature/:featureId", deleteFeature); // Delete single feature by ID
 export default router;

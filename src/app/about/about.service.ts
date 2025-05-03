@@ -8,10 +8,12 @@ export const aboutService = {
 
     try {
       client = await db.connect();
-      await client.query('BEGIN');
+      await client.query("BEGIN");
 
       // Check if an about entry already exists
-      const { rows: existingRows } = await client.query(`SELECT * FROM about LIMIT 1`);
+      const { rows: existingRows } = await client.query(
+        `SELECT * FROM about LIMIT 1`,
+      );
 
       if (existingRows.length > 0) {
         // Update existing row
@@ -20,12 +22,7 @@ export const aboutService = {
            SET title = $1, description = $2, image = $3,  updated_at = NOW() 
            WHERE id = $4 
            RETURNING *`,
-          [
-            data.title,
-            data.description,
-            data.image,
-            existingRows[0].id,
-          ]
+          [data.title, data.description, data.image, existingRows[0].id],
         );
 
         await client.query("COMMIT");
@@ -36,11 +33,7 @@ export const aboutService = {
           `INSERT INTO about (title, description, image)
            VALUES ($1, $2, $3)
            RETURNING *`,
-          [
-            data.title,
-            data.description,
-            data.image,
-          ]
+          [data.title, data.description, data.image],
         );
 
         await client.query("COMMIT");
@@ -83,14 +76,17 @@ export const aboutService = {
        SET title = $1, description = $2, image = $3, updatedAt = NOW()
        WHERE id = $4 
        RETURNING *`,
-      [updated.title, updated.description, updated.image, id]
+      [updated.title, updated.description, updated.image, id],
     );
 
     return result.rows[0];
   },
 
   async deleteAbout(id: string) {
-    const result = await db.query(`DELETE FROM about WHERE id = $1 RETURNING *`, [id]);
+    const result = await db.query(
+      `DELETE FROM about WHERE id = $1 RETURNING *`,
+      [id],
+    );
     return result.rows[0] || null;
   },
 };
