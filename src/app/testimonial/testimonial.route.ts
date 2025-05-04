@@ -1,18 +1,26 @@
-import { Router } from "express";
-import {
-  createTestimonial,
-  getAllTestimonial,
-  getTestimonialById,
-  updateTestimonialposition,
-} from "./testimonial.controller";
+import express from "express";
+import { testimonialController } from "./testimonial.controller";
+import { testimonialSchema } from "./testimonial.zod";
+import { validate } from "../../midleware/validate";
 
-const route = Router();
+const router = express.Router();
 
-route.post("/testimonials", createTestimonial);
-route.get("/testimonials", getAllTestimonial);
-route.get("/testimonials/:id", getTestimonialById);
-route.put("/testimonials", updateTestimonialposition);
-route.put("/testimonials/:id");
-route.delete("/testimonials/:id");
+router.post(
+  "/testimonials/",
+  validate(testimonialSchema),
+  testimonialController.create,
+);
+router.get("/testimonials/", testimonialController.getAll);
+router.get("/testimonials/:id", testimonialController.getById);
+router.patch(
+  "/testimonials/update-positions",
+  testimonialController.updatePositions,
+);
+router.delete("/testimonials/:id", testimonialController.remove);
+router.put(
+  "/testimonials/:id",
+  validate(testimonialSchema.partial()),
+  testimonialController.update,
+);
 
-export default route;
+export default router;

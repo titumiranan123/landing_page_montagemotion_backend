@@ -6,13 +6,14 @@ export const testimonialService = {
   async addTestimonial(data: ITestimonial) {
     try {
       const lastdata = await db.query(
-        `SELECT * FROM testimonials ORDER BY position DESC LIMIT 1`,
+        `SELECT position FROM testimonials ORDER BY position DESC LIMIT 1`,
       );
       const newPosition =
         lastdata.rows.length > 0 ? lastdata.rows[0].position + 1 : 1;
 
       const result = await db.query(
-        `INSERT INTO testimonials (name,designation,message,image,video_message,position,type) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *`,
+        `INSERT INTO testimonials (name, designation, message, image, video_message, position, category, type)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
         [
           data.name,
           data.designation,
@@ -20,54 +21,88 @@ export const testimonialService = {
           data.image,
           data.video_message || "",
           newPosition,
+          data.category,
           data.type,
         ],
       );
-      return result.rows || null;
+
+      return result.rows[0];
     } catch (error) {
       errorLogger.error(error);
+      throw new Error("Error creating testimonial");
     }
   },
-  async getAllTestimonial() {
-    // const cacheKey = "all_testimonial";
-    // const cashData = await getCache(cacheKey);
-    // if (cashData) return cashData;
-    const result = await db.query(`SELECT * FROM testimonials`);
-    // await setCache(cacheKey, result.rows);
 
+  async getAllTestimonial() {
+    const result = await db.query(
+      `SELECT * FROM testimonials ORDER BY position ASC`,
+    );
     return result.rows;
   },
+
   async getTestimonialById(id: string) {
     const result = await db.query(`SELECT * FROM testimonials WHERE id = $1`, [
       id,
     ]);
-
-    return result.rows;
+    return result.rows[0];
   },
+
   async updateTestimonialPositions(testimonials: ITestimonial[]) {
+    const client = await db.connect();
     try {
-      const client = await db.connect();
-      try {
-        await client.query("BEGIN");
-        for (const testimonial of testimonials) {
-          await client.query(
-            `UPDATE testimonials SET position = $1 WHERE id = $2`,
-            [testimonial.position, testimonial.id],
-          );
-        }
-        await client.query("COMMIT");
-        return testimonials;
-      } catch (error) {
-        await client.query("ROLLBACK");
-        errorLogger.error(error);
-      } finally {
-        client.release();
+      await client.query("BEGIN");
+      for (const testimonial of testimonials) {
+        await client.query(
+          `UPDATE testimonials SET position = $1 WHERE id = $2`,
+          [testimonial.position, testimonial.id],
+        );
       }
+      await client.query("COMMIT");
+      return testimonials;
     } catch (error) {
+      await client.query("ROLLBACK");
       errorLogger.error(error);
+      throw new Error("Position update failed");
+    } finally {
+      client.release();
     }
   },
+  async updateTestimonial(id: string, data: Partial<ITestimonial>) {
+    try {
+      const result = await db.query(
+        `UPDATE testimonials
+         SET name = $1,
+             designation = $2,
+             message = $3,
+             image = $4,
+             video_message = $5,
+             category = $6,
+             type = $7,
+             position = $8,
+             updated_at = NOW()
+         WHERE id = $9
+         RETURNING *`,
+        [
+          data.name,
+          data.designation,
+          data.message || "",
+          data.image,
+          data.video_message || "",
+          data.category,
+          data.type,
+          data.position || 1,
+          id,
+        ],
+      );
+      return result.rows[0];
+    } catch (error) {
+      errorLogger.error(error);
+      throw new Error("Error updating testimonial");
+    }
+  },
+
   async deleteTestimonialById(id: string) {
-    await db.query(`DELETE FROM testimonial WHERE id = $1`, [id]);
+    await db.query(`DELETE FROM testimonials WHERE id = $1`, [id]);
+    return { message: "Testimonial deleted" };
   },
 };

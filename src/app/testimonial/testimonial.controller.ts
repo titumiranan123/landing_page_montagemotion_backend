@@ -1,84 +1,45 @@
 import { Request, Response } from "express";
+
 import { asyncHandler } from "../../midleware/asyncHandler";
 import { responseHandler } from "../../utils/responseHandler";
 import { testimonialService } from "./testimonial.services";
 
-export const createTestimonial = asyncHandler(
-  async (req: Request, res: Response) => {
+export const testimonialController = {
+  create: asyncHandler(async (req: Request, res: Response) => {
     const result = await testimonialService.addTestimonial(req.body);
-    if (result) {
-      return responseHandler(
-        res,
-        201,
-        true,
-        "Testimonial created successfully",
-        result,
-      );
-    }
+    return responseHandler(res, 201, true, "Testimonial created", result);
+  }),
 
-    return responseHandler(res, 400, false, "Video creation failed");
-  },
-);
-
-export const getAllTestimonial = asyncHandler(
-  async (req: Request, res: Response) => {
+  getAll: asyncHandler(async (_req: Request, res: Response) => {
     const result = await testimonialService.getAllTestimonial();
-    if (result) {
-      return responseHandler(
-        res,
-        200,
-        true,
-        "Testimonial Retrive successfully",
-        result,
-      );
-    }
-    responseHandler(res, 400, false, "Testimonial Retrive failed", result);
-  },
-);
-export const getTestimonialById = asyncHandler(
-  async (req: Request, res: Response) => {
+    return responseHandler(res, 200, true, "Testimonials fetched", result);
+  }),
+
+  getById: asyncHandler(async (req: Request, res: Response) => {
     const result = await testimonialService.getTestimonialById(req.params.id);
-    if (result) {
-      return responseHandler(
-        res,
-        200,
-        true,
-        "Testimonial Retrive successfully",
-        result,
-      );
-    }
-    responseHandler(res, 400, false, "Testimonial Retrive failed", result);
-  },
-);
-export const updateTestimonialById = asyncHandler(
-  async (req: Request, res: Response) => {
-    const result = await testimonialService.getTestimonialById(req.params.id);
-    if (result) {
-      return responseHandler(
-        res,
-        200,
-        true,
-        "Testimonial Retrive successfully",
-        result,
-      );
-    }
-    responseHandler(res, 400, false, "Testimonial Retrive failed", result);
-  },
-);
-export const updateTestimonialposition = asyncHandler(
-  async (req: Request, res: Response) => {
+    if (!result)
+      return responseHandler(res, 404, false, "Testimonial not found");
+    return responseHandler(res, 200, true, "Testimonial fetched", result);
+  }),
+
+  updatePositions: asyncHandler(async (req: Request, res: Response) => {
     const result = await testimonialService.updateTestimonialPositions(
+      req.body.testimonials,
+    );
+    return responseHandler(res, 200, true, "Positions updated", result);
+  }),
+  update: asyncHandler(async (req: Request, res: Response) => {
+    const result = await testimonialService.updateTestimonial(
+      req.params.id,
       req.body,
     );
-    if (result) {
-      return responseHandler(
-        res,
-        200,
-        true,
-        "Testimonials update successfully",
-        result,
-      );
-    }
-    responseHandler(res, 400, false, "Testimonials update failed", result);
-  },
-);
+    return responseHandler(res, 200, true, "Testimonial updated", result);
+  }),
+
+  remove: asyncHandler(async (req: Request, res: Response) => {
+    const result = await testimonialService.deleteTestimonialById(
+      req.params.id,
+    );
+    return responseHandler(res, 200, true, "Testimonial deleted", result);
+  }),
+};

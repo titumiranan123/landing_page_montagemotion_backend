@@ -1,11 +1,13 @@
 import { z } from "zod";
 
 export const testimonialSchema = z.object({
-  name: z.string().min(3),
-  designation: z.string().min(3),
-  message: z.string().min(3).optional(),
-  image: z.string().min(3).optional(),
-  video_message: z.string().min(3).optional(),
+  name: z.string().min(1),
+  designation: z.string().min(1),
+  image: z.string().url(),
+  video_message: z.string().optional(),
+  message: z.string().optional(),
+  position: z.number().optional(),
+  category: z.enum(["message", "video_message"]),
   type: z.enum([
     "main",
     "shorts",

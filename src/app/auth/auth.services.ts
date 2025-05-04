@@ -198,7 +198,7 @@ export const authService = {
         is_successful: true,
         login_time: new Date(),
       };
-
+      logger.info(logs);
       await this.logUserLogin(logs);
 
       return {

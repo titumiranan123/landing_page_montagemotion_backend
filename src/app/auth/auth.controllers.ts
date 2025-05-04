@@ -77,27 +77,6 @@ export const localLogin = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
-export const checkAuth = asyncHandler(async (req: Request, res: Response) => {
-  if (req.isAuthenticated()) {
-    const info = req.user as any;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password, ...user } = info[0];
-    return responseHandler(
-      res,
-      200,
-      true,
-      "Authenticated user retrived successfully",
-      user,
-    );
-  }
-  responseHandler(
-    res,
-    400,
-    false,
-    "You are not logged in. Please log in to continue",
-  );
-});
-
 export const makeAdmin = asyncHandler(async (req: Request, res: Response) => {
   const result = await authService.makeAdmin(req.params.id);
   if (result) {
