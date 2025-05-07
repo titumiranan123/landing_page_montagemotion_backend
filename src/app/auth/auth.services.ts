@@ -115,9 +115,9 @@ export const authService = {
       // Update the user status
       const updateUser = await client.query(
         `UPDATE users 
-         SET verified = true, status = 'active' 
+         SET verified = true 
          WHERE id = $1 
-         RETURNING id, name, email, verified, status`,
+         RETURNING id, name, email, verified`,
         [userId],
       );
 
