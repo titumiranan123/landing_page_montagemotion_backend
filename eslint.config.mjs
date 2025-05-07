@@ -6,7 +6,7 @@ import { defineConfig } from "eslint/config";
 
 export default defineConfig([
   { files: ["**/*.{js,mjs,cjs,ts}"], plugins: { js }, extends: ["js/recommended"] },
-  { files: ["**/*.{js,mjs,cjs,ts}"], languageOptions: { globals: globals.node } , rules: {
+  { files: ["**/*.{js,mjs,cjs,ts}"], languageOptions: { globals: globals.node } ,ignores:['dist',"node_modules"], rules: {
     // General
     "no-console": "warn",
     "no-unused-vars": "off", // Turned off to use TS rule below

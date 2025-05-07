@@ -2,6 +2,7 @@ import { Router } from "express";
 import * as contactController from "./contact.controller";
 import { validate } from "../../midleware/validate";
 import { contactSchema } from "./contact.zod";
+import auth from "../../midleware/authMidleware";
 const route = Router();
 
 route.post(
@@ -11,13 +12,13 @@ route.post(
 );
 route.get(
   "/contacts",
-  // requireRole(["ADMIN", "MODARATOR"]),
+  auth("ADMIN", "MODARATOR"),
   contactController.getAllContact,
 );
 
 route.delete(
   "/contacts/:id",
-  // requireRole(["ADMIN", "MODARATOR"]),
+  auth("ADMIN", "MODARATOR"),
   contactController.deleteContactById,
 );
 //  requireRole(["ADMIN", "MODARATOR"]),

@@ -50,7 +50,7 @@ app.use("/api", memberRoute);
 app.use("/api", uploadRoute);
 
 app.get("/", (_req, res) => {
-  res.send("connected");
+  res.send("connected docker setup done update helo i binded");
 });
 
 app.use(globalErrorHandler);

@@ -8,13 +8,13 @@ export const VideosService = {
   async addVideo(data: IVideo) {
     try {
       const lastdata = await db.query(
-        `SELECT * FROM Works ORDER BY position DESC LIMIT 1`,
+        `SELECT * FROM works ORDER BY position DESC LIMIT 1`,
       );
       const newPosition =
         lastdata.rows.length > 0 ? lastdata.rows[0].position + 1 : 1;
 
       const result = await db.query(
-        `INSERT INTO Works (title, description, thumbnail, video_link, is_visible, is_feature, position, type, sub_type) 
+        `INSERT INTO works (title, description, thumbnail, video_link, is_visible, is_feature, position, type, sub_type) 
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) 
          RETURNING *`,
         [
@@ -38,13 +38,13 @@ export const VideosService = {
 
   // READ all
   async getAllVideos() {
-    const result = await db.query(`SELECT * FROM Works ORDER BY position ASC`);
+    const result = await db.query(`SELECT * FROM works ORDER BY position ASC`);
     return result.rows;
   },
 
   // READ by query
   async getAllVideosforWebsite(query: { id?: string; type?: string }) {
-    let basedQuery = `SELECT * FROM Works`;
+    let basedQuery = `SELECT * FROM works`;
     const conditions = [];
     const values = [];
 
@@ -67,7 +67,7 @@ export const VideosService = {
 
   // READ by id
   async getVideosById(id: string) {
-    const result = await db.query(`SELECT * FROM Works WHERE id = $1`, [id]);
+    const result = await db.query(`SELECT * FROM works WHERE id = $1`, [id]);
     return result.rows[0] || null;
   },
 
@@ -85,7 +85,7 @@ export const VideosService = {
 
       values.push(id); // last for WHERE id
 
-      const query = `UPDATE Works SET ${fields.join(", ")} WHERE id = $${index} RETURNING *`;
+      const query = `UPDATE works SET ${fields.join(", ")} WHERE id = $${index} RETURNING *`;
       const result = await db.query(query, values);
       return result.rows[0] || null;
     } catch (error) {
@@ -98,7 +98,7 @@ export const VideosService = {
   async deleteVideo(id: string) {
     try {
       const result = await db.query(
-        `DELETE FROM Works WHERE id = $1 RETURNING *`,
+        `DELETE FROM works WHERE id = $1 RETURNING *`,
         [id],
       );
       return result.rows[0] || null;
@@ -115,7 +115,7 @@ export const VideosService = {
       try {
         await client.query("BEGIN");
         for (const video of videos) {
-          await client.query(`UPDATE Works SET position = $1 WHERE id = $2`, [
+          await client.query(`UPDATE works SET position = $1 WHERE id = $2`, [
             video.position,
             video.id,
           ]);
