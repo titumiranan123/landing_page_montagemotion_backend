@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { db } from "../../db/db";
 import { IBlog } from "./blogs.inteface";
 
@@ -41,9 +42,7 @@ export const BlogService = {
     return result.rows[0];
   },
   async getAllBlogs() {
-    const result = await db.query(
-      `SELECT * FROM blogs ORDER BY created_at DESC`,
-    );
+    const result = await db.query(`SELECT * FROM blogs ORDER BY position ASC`);
     return result.rows;
   },
 
@@ -86,13 +85,13 @@ export const BlogService = {
   },
   async updateBlogPosition(blogs: { id: string; position: number }[]) {
     const updates: Promise<any>[] = [];
+
     for (const blog of blogs) {
       const existing = await db.query(
         `SELECT position FROM blogs WHERE id = $1`,
         [blog.id],
       );
       const currentPosition = existing.rows[0]?.position;
-
       if (currentPosition !== blog.position) {
         const updateQuery = db.query(
           `UPDATE blogs SET position = $1 WHERE id = $2`,
@@ -101,9 +100,10 @@ export const BlogService = {
         updates.push(updateQuery);
       }
     }
-
-    // Await all updates
     await Promise.all(updates);
+
+    const result = await db.query(`SELECT * FROM blogs ORDER BY position ASC`);
+    return result.rows;
   },
   async deleteBlog(id: string) {
     const result = await db.query(

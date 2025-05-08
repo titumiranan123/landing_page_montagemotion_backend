@@ -9,14 +9,29 @@ import {
 } from "./blog.controller";
 import { validate } from "../../midleware/validate";
 import { BlogSchema, BlogUpdateSchema } from "./blog.zod";
+import auth from "../../midleware/authMidleware";
 
 const router = express.Router();
 
-router.post("/blogs", validate(BlogSchema), createBlog);
+router.post(
+  "/blogs",
+  auth("ADMIN", "MODARATOR"),
+  validate(BlogSchema),
+  createBlog,
+);
 router.get("/blogs", getAllBlogs);
 router.get("/blogs/:id", getBlogById);
-router.put("/blogs/:id", validate(BlogUpdateSchema), updateBlog);
-router.patch("/blogs/positions", updateBlogPosition);
-router.delete("/blogs/:id", deleteBlog);
+router.put(
+  "/blogs/:id",
+  auth("ADMIN", "MODARATOR"),
+  validate(BlogUpdateSchema),
+  updateBlog,
+);
+router.patch(
+  "/blogs/positions",
+  auth("ADMIN", "MODARATOR"),
+  updateBlogPosition,
+);
+router.delete("/blogs/:id", auth("ADMIN", "MODARATOR"), deleteBlog);
 
 export default router;

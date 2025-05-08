@@ -14,18 +14,23 @@ import {
 } from "./faq.controllers";
 import { validate } from "../../midleware/validate";
 import { faqSchema } from "./faq.zod";
+import auth from "../../midleware/authMidleware";
 
 const router = Router();
 
-router.post("/faq", validate(faqSchema), createFaq);
-router.patch("/faq/:id", updateFaq);
+router.post("/faq", auth("ADMIN", "MODARATOR"), validate(faqSchema), createFaq);
+router.patch("/faq/:id", auth("ADMIN", "MODARATOR"), updateFaq);
 router.get("/faq", getAllFaqs);
 router.get("/faq:id", getFaqById);
 router.get("/faq/type/:type", getFaqByType);
-router.delete("/faq/:id", deleteFaq);
-router.post("/faqitem/", createFaqItem); // POST /faq-items
-router.patch("/faqitem/:id", updateFaqItem); // PATCH /faq-items/:id
-router.put("/faqitem/positions", updateFaqItemPosition); // PATCH /faq-items/:id
-router.delete("/faqitem/:id", deleteFaqItem); // DELETE /faq-items/:id
+router.delete("/faq/:id", auth("ADMIN", "MODARATOR"), deleteFaq);
+router.post("/faqitem/", auth("ADMIN", "MODARATOR"), createFaqItem); // POST /faq-items
+router.patch("/faqitem/:id", auth("ADMIN", "MODARATOR"), updateFaqItem); // PATCH /faq-items/:id
+router.put(
+  "/faqitem/positions",
+  auth("ADMIN", "MODARATOR"),
+  updateFaqItemPosition,
+);
+router.delete("/faqitem/:id", auth("ADMIN", "MODARATOR"), deleteFaqItem); // DELETE /faq-items/:id
 router.get("/faqitem/:faqId", getFaqItemsByFaqId);
 export default router;

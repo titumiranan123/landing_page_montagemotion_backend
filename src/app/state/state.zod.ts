@@ -1,8 +1,23 @@
 import { z } from "zod";
 
-export const recentSchema = z.object({
-  successfull_projects: z.string(),
-  experience: z.string(),
-  total_member: z.boolean(),
-  type: z.enum(["short_video", "talking_head", "podcast", "thumbnail"]),
+export const StateSchema = z.object({
+  id: z.string().optional(),
+  isActive: z.boolean(),
+  states: z.array(
+    z.object({
+      title: z.string(),
+      count: z.number(),
+      unit: z.string(),
+      isPublish: z.boolean(),
+    }),
+  ),
+  type: z.enum([
+    "main",
+    "shorts",
+    "talking",
+    "podcast",
+    "graphic",
+    "advertising",
+    "website",
+  ]),
 });

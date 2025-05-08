@@ -6,22 +6,18 @@ import {
   updateAbout,
   deleteAbout,
 } from "./about.controller";
+import auth from "../../midleware/authMidleware";
 
 const router = Router();
 
-// Only one about content is allowed; this will insert or update the existing one
-router.post("/about", createOrUpdateAbout);
+router.post("/about", auth("ADMIN", "MODARATOR"), createOrUpdateAbout);
 
-// Get all (ideally returns only one due to the logic)
 router.get("/about/", getAllAbouts);
 
-// Get a specific about content by ID
 router.get("/about/:id", getAboutById);
 
-// Update specific about content by ID
-router.put("/about/:id", updateAbout);
+router.put("/about/:id", auth("ADMIN", "MODARATOR"), updateAbout);
 
-// Delete about content by ID
-router.delete("/about/:id", deleteAbout);
+router.delete("/about/:id", auth("ADMIN", "MODARATOR"), deleteAbout);
 
 export default router;
