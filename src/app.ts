@@ -20,6 +20,8 @@ import aboutRoute from "./app/about/about.route";
 import blogRoute from "./app/blogs/blog.route";
 import webRoute from "./app/homeapis/homeapi.routes";
 import memberRoute from "./app/member/member.route";
+import { invalidateRoute } from "./midleware/invalideroute";
+import seoRoute from "./app/seo/seo.route";
 
 const app = express();
 app.use(
@@ -33,6 +35,7 @@ app.use(
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 app.use("/api", faqRoute);
 app.use("/api", headerRoute);
 app.use("/api", pricingRoute);
@@ -48,13 +51,14 @@ app.use("/api", blogRoute);
 app.use("/api", webRoute);
 app.use("/api", memberRoute);
 app.use("/api", uploadRoute);
+app.use("/api", seoRoute);
 
 app.get("/", (_req, res) => {
   res.send("connected ");
 });
 
+app.use(invalidateRoute);
 app.use(globalErrorHandler);
-
 (async () => {
   await redisClient.set("test-key", "Hello Redis Cloud!");
   const value = await redisClient.get("test-key");

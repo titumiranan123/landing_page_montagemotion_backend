@@ -5,11 +5,9 @@ import { IAbout } from "./about.interface";
 export const aboutService = {
   async createOrUpdateAbout(data: IAbout) {
     let client;
-
     try {
       client = await db.connect();
       await client.query("BEGIN");
-
       // Check if an about entry already exists
       const { rows: existingRows } = await client.query(
         `SELECT * FROM about LIMIT 1`,
@@ -24,7 +22,6 @@ export const aboutService = {
            RETURNING *`,
           [data.title, data.description, data.image, existingRows[0].id],
         );
-
         await client.query("COMMIT");
         return result.rows[0];
       } else {

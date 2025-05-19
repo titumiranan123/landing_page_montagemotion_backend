@@ -68,8 +68,9 @@ export const BlogService = {
            image = $4,
            is_publish = $5,
            is_feature = $6,
+           slug=$7,
            updated_at = NOW()
-       WHERE id = $7
+       WHERE id = $8
        RETURNING *`,
       [
         updated.title,
@@ -78,6 +79,7 @@ export const BlogService = {
         updated.image,
         updated.is_publish,
         updated.is_feature,
+        generateSlug(updated.title),
         id,
       ],
     );

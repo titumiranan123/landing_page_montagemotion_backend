@@ -14,14 +14,11 @@ export const authService = {
   async createUser(data: IUser) {
     const client = await db.connect();
     await client.query("BEGIN");
-
     try {
       if (!data) {
         throw new ApiError(400, false, "Please check your data.");
       }
-
       const { name, email, password } = data;
-
       if (!name || !email || !password) {
         throw new ApiError(
           400,
@@ -29,14 +26,12 @@ export const authService = {
           "Name, email, and password are required.",
         );
       }
-
       // Check if user already exists
       const exists = await checkUser(email);
       if (exists) {
         errorLogger.error("User already exists");
         throw new ApiError(400, false, "User already exists");
       }
-
       const hashedPassword = await bcrypt.hash(password, 10);
       const verificationToken = generateVerificationCode();
       const verificationTokenExpiresAt = new Date(
@@ -90,13 +85,10 @@ export const authService = {
       client.release();
     }
   },
-
   async verifyToken(code: string) {
     const client = await db.connect();
-
     try {
       await client.query("BEGIN");
-
       // Check if the verification token is valid
       const res = await client.query(
         `SELECT user_id FROM user_dynamic_data 
@@ -105,13 +97,10 @@ export const authService = {
          FOR UPDATE LIMIT 1`,
         [code],
       );
-
       if (res.rowCount === 0) {
         throw new ApiError(400, false, "Invalid or expired verification token");
       }
-
       const userId = res.rows[0].user_id;
-
       // Update the user status
       const updateUser = await client.query(
         `UPDATE users 
@@ -124,7 +113,6 @@ export const authService = {
       if (updateUser.rowCount === 0) {
         throw new ApiError(400, false, "User verification failed");
       }
-
       // Clear the verification token
       await client.query(
         `UPDATE user_dynamic_data 
@@ -132,7 +120,6 @@ export const authService = {
          WHERE user_id = $1`,
         [userId],
       );
-
       await client.query("COMMIT");
       return updateUser.rows[0];
     } catch (error: any) {
@@ -173,10 +160,10 @@ export const authService = {
       // }
 
       const passwordMatch = await bcrypt.compare(data.password, user.password);
+
       if (!passwordMatch) {
         throw new ApiError(401, false, "Invalid credentials");
       }
-
       const token = jwt.sign(
         {
           id: user.id,

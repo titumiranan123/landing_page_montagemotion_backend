@@ -5,7 +5,7 @@ export const VideoSchema = z.object({
   title: z.string().min(1, "Title is required").optional(),
   description: z.string().min(1, "Description is required").optional(),
   thumbnail: z.string().url("Thumbnail must be a valid URL"),
-  video_link: z.string().url("Video link must be a valid URL").optional(),
+  video_link: z.string().optional(),
   isVisible: z.boolean().optional(),
   isFeature: z.boolean().optional(),
   position: z.number().optional(),

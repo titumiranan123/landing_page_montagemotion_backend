@@ -15,7 +15,7 @@ export interface IVideo {
     | "graphic"
     | "advertising"
     | "website";
-  subType?:
+  sub_type?:
     | "full"
     | "short"
     | "hook"

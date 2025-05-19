@@ -8,7 +8,8 @@ export const VideosService = {
   async addVideo(data: IVideo) {
     try {
       const lastdata = await db.query(
-        `SELECT * FROM works ORDER BY position DESC LIMIT 1`,
+        `SELECT * FROM works WHERE type = $1 ORDER BY position DESC LIMIT 1`,
+        [data.type],
       );
       const newPosition =
         lastdata.rows.length > 0 ? lastdata.rows[0].position + 1 : 1;
@@ -26,7 +27,7 @@ export const VideosService = {
           data.is_feature ?? false,
           newPosition,
           data.type,
-          data.subType || null,
+          data.sub_type || null,
         ],
       );
       return result.rows[0] || null;
@@ -60,6 +61,7 @@ export const VideosService = {
     if (conditions.length > 0) {
       basedQuery += ` WHERE ` + conditions.join(" AND ");
     }
+    basedQuery += ` ORDER BY position ASC`;
 
     const result = await db.query(basedQuery, values);
     return result.rows;
@@ -114,12 +116,34 @@ export const VideosService = {
       const client = await db.connect();
       try {
         await client.query("BEGIN");
+
+        // Step 1: Group videos by type
+        const groupedByType: Record<string, IVideo[]> = {};
         for (const video of videos) {
-          await client.query(`UPDATE works SET position = $1 WHERE id = $2`, [
-            video.position,
-            video.id,
-          ]);
+          if (!groupedByType[video.type]) {
+            groupedByType[video.type] = [];
+          }
+          groupedByType[video.type].push(video);
         }
+
+        // Step 2: For each type, sort and assign positions starting from 1
+        for (const type in groupedByType) {
+          const group = groupedByType[type];
+
+          // You can sort based on old position or any logic
+          group.sort((a, b) => (a.position ?? 0) - (b.position ?? 0));
+
+          for (let i = 0; i < group.length; i++) {
+            const video = group[i];
+            const newPosition = i + 1;
+
+            await client.query(`UPDATE works SET position = $1 WHERE id = $2`, [
+              newPosition,
+              video.id,
+            ]);
+          }
+        }
+
         await client.query("COMMIT");
         return videos;
       } catch (error) {
