@@ -12,7 +12,7 @@ memberRoute.post(
   validate(memberProfileSchema),
   MemberController.create,
 );
-memberRoute.get("/members", MemberController.getAll); // optional ?role=Team Member
+memberRoute.get("/members", MemberController.getAll);
 memberRoute.get("/members/:id", MemberController.getMemberById);
 memberRoute.put(
   "/members/:id",

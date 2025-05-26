@@ -2,9 +2,10 @@ export interface IHeader {
   id?: string;
   title: string;
   description: string;
+  book_link: string;
   thumbnail: string;
+  alt: string;
   video_link: string;
-  isActive: string;
   type:
     | "main"
     | "shorts"
@@ -13,4 +14,6 @@ export interface IHeader {
     | "graphic"
     | "advertising"
     | "website";
+  created_at?: Date;
+  updated_at?: Date;
 }

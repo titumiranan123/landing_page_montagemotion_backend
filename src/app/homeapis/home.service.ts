@@ -9,39 +9,42 @@ export const homeapiServices = {
       await client.query("BEGIN");
 
       const headerService = await client.query(
-        `SELECT title , description,thumbnail,video_link FROM headers WHERE type = $1 `,
+        `SELECT title, description, thumbnail, video_link FROM headers WHERE type = $1`,
         [type],
       );
 
       const worksService = await client.query(
-        `SELECT thumbnail , video_link,sub_type FROM Works WHERE type = $1 AND is_visible = true ORDER BY position ASC`,
+        `SELECT thumbnail, video_link, sub_type FROM Works WHERE type = $1 AND is_visible = true ORDER BY position ASC`,
         [type],
       );
 
       const testimonialService = await client.query(
-        `SELECT * FROM testimonials WHERE type = $1 `,
+        `SELECT * FROM testimonials WHERE type = $1`,
         [type],
       );
+
       const pricingService = async () => {
         const res = await client.query(
           `SELECT * FROM packages WHERE type = $1`,
           [type],
         );
-        if (!res.rowCount) throw new Error("Package not found");
-        for (const pkg of res.rows) {
+        const packages = res.rows;
+
+        for (const pkg of packages) {
           pkg.features = await packageFeatureService.getFeaturesByPackageId(
             pkg.id,
           );
         }
 
-        return res.rows;
+        return packages;
       };
 
       const faqService = async () => {
         const result = await client.query(
-          `SELECT id, title, sub_title FROM faqs WHERE type = $1 AND is_visible = true `,
+          `SELECT id, title, sub_title FROM faqs WHERE type = $1 AND is_visible = true`,
           [type],
         );
+
         const faq = result.rows[0];
         if (!faq) return null;
 
@@ -49,6 +52,7 @@ export const homeapiServices = {
           `SELECT * FROM faq_items WHERE faq_id = $1 ORDER BY position ASC`,
           [faq.id],
         );
+
         faq.faqs = faqitem.rows;
         return faq;
       };
@@ -59,11 +63,11 @@ export const homeapiServices = {
       await client.query("COMMIT");
 
       return {
-        header: headerService.rows[0],
-        works: worksService.rows,
-        testimonial: testimonialService.rows,
+        header: headerService.rows[0] || null,
+        works: worksService.rows || [],
+        testimonial: testimonialService.rows || [],
         faqs: allFaqs,
-        pricing: prices,
+        pricing: prices || [],
       };
     } catch (error) {
       await client.query("ROLLBACK");
@@ -80,6 +84,7 @@ export const homeapiServices = {
       await client.query("BEGIN");
 
       const aboutService = await client.query(`SELECT * FROM about`);
+
       const member = role
         ? await client.query(
             `SELECT name, designation, photourl FROM members WHERE role = $1 ORDER BY position ASC`,
@@ -90,8 +95,8 @@ export const homeapiServices = {
       await client.query("COMMIT");
 
       return {
-        about: aboutService.rows[0],
-        member: member.rows,
+        about: aboutService.rows[0] || null,
+        member: member.rows || [],
       };
     } catch (error) {
       await client.query("ROLLBACK");
@@ -101,17 +106,29 @@ export const homeapiServices = {
       client.release();
     }
   },
+
   async getAllHomeBlogs() {
-    const result = await db.query(
-      `SELECT title , short_description,description,image,slug ,created_at FROM blogs ORDER BY position ASC`,
-    );
-    return result.rows;
+    try {
+      const result = await db.query(
+        `SELECT title, short_description, description, image, slug, created_at FROM blogs ORDER BY position ASC`,
+      );
+      return result.rows || [];
+    } catch (error) {
+      errorLogger.error(error);
+      return [];
+    }
   },
+
   async getSingleBlogs(slug: string) {
-    const result = await db.query(
-      `SELECT title , short_description,description,image,slug ,created_at FROM blogs WHERE slug = $1 ORDER BY position ASC`,
-      [slug],
-    );
-    return result.rows[0];
+    try {
+      const result = await db.query(
+        `SELECT title, short_description, description, image, slug, created_at FROM blogs WHERE slug = $1 ORDER BY position ASC`,
+        [slug],
+      );
+      return result.rows[0] || null;
+    } catch (error) {
+      errorLogger.error(error);
+      return null;
+    }
   },
 };

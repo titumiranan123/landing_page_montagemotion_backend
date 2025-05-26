@@ -15,8 +15,8 @@ export const seoMetaSchema = z.object({
     "contact",
     "blog",
   ]),
-  metaTitle: z.string().min(1),
-  metaDescription: z.string().min(1),
+  metaTitle: z.string().min(1).optional(),
+  metaDescription: z.string().min(1).optional(),
   metaKeywords: z.string().optional(),
 
   canonicalUrl: z.string().url().optional(),

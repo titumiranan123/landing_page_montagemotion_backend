@@ -22,6 +22,7 @@ import webRoute from "./app/homeapis/homeapi.routes";
 import memberRoute from "./app/member/member.route";
 import { invalidateRoute } from "./midleware/invalideroute";
 import seoRoute from "./app/seo/seo.route";
+import campaignRoutes from "./app/campaign-aplication/campaign.route";
 
 const app = express();
 app.use(
@@ -51,6 +52,7 @@ app.use("/api", blogRoute);
 app.use("/api", webRoute);
 app.use("/api", memberRoute);
 app.use("/api", uploadRoute);
+app.use("/api", campaignRoutes);
 app.use("/api", seoRoute);
 
 app.get("/", (_req, res) => {

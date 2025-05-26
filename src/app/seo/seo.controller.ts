@@ -1,41 +1,69 @@
 import { Request, Response } from "express";
-
 import { seoMetaService } from "./seo.service";
-import { asyncHandler } from "../../midleware/asyncHandler";
+
 import { responseHandler } from "../../utils/responseHandler";
+import { asyncHandler } from "../../midleware/asyncHandler";
 
 export const upsertSeoMeta = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response): Promise<void> => {
+    if (!req.body || Object.keys(req.body).length === 0) {
+      responseHandler(res, 400, false, "SEO meta data is required");
+    }
+
     const result = await seoMetaService.upsertSeoMeta(req.body);
-    return responseHandler(res, 200, true, "SEO Meta data saved", result);
+
+    if (!result) {
+      responseHandler(res, 500, false, "Failed to save SEO meta data");
+    }
+
+    responseHandler(res, 200, true, "SEO meta data saved", result);
   },
 );
 
 export const getSeoMetaByPage = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response): Promise<void> => {
     const { pageName } = req.params;
-    const result = await seoMetaService.getSeoMetaByPage(pageName);
-    if (result) {
-      return responseHandler(res, 200, true, "SEO Meta data fetched", result);
+
+    if (!pageName) {
+      responseHandler(res, 400, false, "Page name is required");
     }
-    return responseHandler(res, 404, false, "SEO Meta data not found");
+
+    const result = await seoMetaService.getSeoMetaByPage(pageName);
+
+    if (!result) {
+      responseHandler(res, 404, false, "SEO meta data not found");
+    }
+
+    responseHandler(res, 200, true, "SEO meta data fetched", result);
   },
 );
 
 export const getAllSeoMeta = asyncHandler(
-  async (_req: Request, res: Response) => {
+  async (_req: Request, res: Response): Promise<void> => {
     const result = await seoMetaService.getAllSeoMeta();
-    return responseHandler(res, 200, true, "All SEO Meta data fetched", result);
+
+    if (!result || result.length === 0) {
+      responseHandler(res, 404, false, "No SEO meta data found");
+    }
+
+    responseHandler(res, 200, true, "All SEO meta data fetched", result);
   },
 );
 
 export const deleteSeoMetaByPage = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response): Promise<void> => {
     const { pageName } = req.params;
-    const result = await seoMetaService.deleteSeoMetaByPage(pageName);
-    if (result) {
-      return responseHandler(res, 200, true, "SEO Meta deleted", result);
+
+    if (!pageName) {
+      responseHandler(res, 400, false, "Page name is required");
     }
-    return responseHandler(res, 404, false, "SEO Meta not found");
+
+    const result = await seoMetaService.deleteSeoMetaByPage(pageName);
+
+    if (!result) {
+      responseHandler(res, 404, false, "SEO meta data not found");
+    }
+
+    responseHandler(res, 200, true, "SEO meta data deleted", result);
   },
 );

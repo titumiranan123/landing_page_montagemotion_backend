@@ -6,11 +6,11 @@ import ApiError from "../utils/ApiError";
 import { Upload } from "@aws-sdk/lib-storage";
 export const r2Client = new S3Client({
   region: "auto",
-  endpoint: `https://096322334c8d03f5e788f6e7024abeea.r2.cloudflarestorage.com`,
+  endpoint: `https://3baf2988ad4837c5c3396cdbe69ccf66.r2.cloudflarestorage.com`,
   credentials: {
-    accessKeyId: "4471145f8ff57ce629583e304e68722a",
+    accessKeyId: "26c72631615111ea50e406cde8e9e61b",
     secretAccessKey:
-      "a3fa11b7daad4a3c4390f87b76717def3859c36a9680cb6a84e9ee8682380996",
+      "5c9b5fa71f05fcf252c42a49af879a1ef2c245151eeee19a5da85d1cbed93209",
   },
 });
 // for health check
@@ -33,14 +33,14 @@ export const uploadToR2 = async (
     const upload = new Upload({
       client: r2Client,
       params: {
-        Bucket: "testdata",
+        Bucket: "montagemotion",
         Key: fileKey,
         Body: buffer,
         ContentType: contentType,
       },
     });
     await upload.done();
-    return `https://pub-ec42ff955758460994cdb2c45e5b6daa.r2.dev/${fileKey}`;
+    return `https://pub-6a9bd81559354e09b0ca799ba12301c8.r2.dev/${fileKey}`;
   } catch (error: any) {
     errorLogger.error("R2Object Error", error);
     throw new ApiError(400, false, error.message);

@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { db } from "../../db/db";
 import { IBlog } from "./blogs.inteface";
 
@@ -10,7 +9,7 @@ export function generateSlug(title: string): string {
     .replace(/[^a-z0-9\s-]/g, "") // remove special chars
     .replace(/\s+/g, "-") // replace spaces with dashes
     .replace(/-+/g, "-") // collapse multiple dashes
-    .substring(0, 100); // limit to 100 chars if needed
+    .substring(0, 100); // limit to 100 chars
 }
 
 export const BlogService = {
@@ -21,26 +20,31 @@ export const BlogService = {
     const positionResult = await db.query(
       `SELECT MAX(position) as max FROM blogs`,
     );
-    const lastPosition = positionResult.rows[0].max || 0;
+    const lastPosition = positionResult.rows[0]?.max || 0;
     const newPosition = lastPosition + 1;
 
     const result = await db.query(
-      `INSERT INTO blogs (title, short_description, description, image, is_publish, is_feature, slug, position, created_at, updated_at)
-           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW(), NOW())
-           RETURNING *`,
+      `INSERT INTO blogs (
+        title, slug, short_description, description, image, alt, 
+        is_publish, is_feature, position, created_at, updated_at
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW(), NOW())
+      RETURNING *`,
       [
         data.title,
+        slug,
         data.short_description,
         data.description,
         data.image,
-        data.is_publish || false,
-        data.is_feature || false,
-        slug,
+        data.alt,
+        data.is_publish ?? true,
+        data.is_feature ?? false,
         newPosition,
       ],
     );
-    return result.rows[0];
+
+    return result.rows[0] || null;
   },
+
   async getAllBlogs() {
     const result = await db.query(`SELECT * FROM blogs ORDER BY position ASC`);
     return result.rows;
@@ -52,39 +56,44 @@ export const BlogService = {
   },
 
   async updateBlog(id: string, data: Partial<IBlog>) {
-    const existing = await BlogService.getBlogById(id);
-    if (!existing) throw new Error("Blog not found");
+    const existing = await this.getBlogById(id);
+    if (!existing) return null;
 
     const updated = {
       ...existing,
       ...data,
+      slug: generateSlug(data.title ?? existing.title),
     };
 
     const result = await db.query(
-      `UPDATE blogs
-       SET title = $1,
-           short_description = $2,
-           description = $3,
-           image = $4,
-           is_publish = $5,
-           is_feature = $6,
-           slug=$7,
-           updated_at = NOW()
-       WHERE id = $8
-       RETURNING *`,
+      `UPDATE blogs SET
+        title = $1,
+        slug = $2,
+        short_description = $3,
+        description = $4,
+        image = $5,
+        alt = $6,
+        is_publish = $7,
+        is_feature = $8,
+        updated_at = NOW()
+      WHERE id = $9
+      RETURNING *`,
       [
         updated.title,
+        updated.slug,
         updated.short_description,
         updated.description,
         updated.image,
+        updated.alt,
         updated.is_publish,
         updated.is_feature,
-        generateSlug(updated.title),
         id,
       ],
     );
-    return result.rows[0];
+
+    return result.rows[0] || null;
   },
+
   async updateBlogPosition(blogs: { id: string; position: number }[]) {
     const updates: Promise<any>[] = [];
 
@@ -94,6 +103,7 @@ export const BlogService = {
         [blog.id],
       );
       const currentPosition = existing.rows[0]?.position;
+
       if (currentPosition !== blog.position) {
         const updateQuery = db.query(
           `UPDATE blogs SET position = $1 WHERE id = $2`,
@@ -102,11 +112,12 @@ export const BlogService = {
         updates.push(updateQuery);
       }
     }
-    await Promise.all(updates);
 
+    await Promise.all(updates);
     const result = await db.query(`SELECT * FROM blogs ORDER BY position ASC`);
     return result.rows;
   },
+
   async deleteBlog(id: string) {
     const result = await db.query(
       `DELETE FROM blogs WHERE id = $1 RETURNING *`,

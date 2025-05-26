@@ -12,39 +12,25 @@ export const MemberService = {
 
     const result = await db.query(
       `INSERT INTO members (
-        name, role, designation, username, photourl, bio, location, email, phone,
-        niche, followers, platforms, collaborationtype, engagementrate, portfoliolinks,
-        skills, sociallinks, position
+        name, role, designation, photourl, email, phone, bio, position
       ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9,
-        $10, $11, $12, $13, $14, $15,
-        $16, $17, $18
+        $1, $2, $3, $4, $5, $6, $7, $8
       ) RETURNING *`,
       [
         data.name,
         data.role,
         data.designation,
-        data.username,
         data.photourl,
-        data.bio,
-        data.location,
         data.email,
         data.phone,
-        data.niche,
-        data.followers,
-        JSON.stringify(data.platforms || []),
-        JSON.stringify(data.collaborationtype || []),
-        data.engagementrate,
-        JSON.stringify(data.portfoliolinks || []),
-        JSON.stringify(data.skills || []),
-        JSON.stringify(data.sociallinks || {}),
+        data.bio,
         newPosition,
       ],
     );
     return result.rows[0];
   },
 
-  async getAllMembers(role?: "Team Member" | "Influencer") {
+  async getAllMembers(role?: "team_member" | "influencer") {
     const result = role
       ? await db.query(
           `SELECT * FROM members WHERE role = $1 ORDER BY position ASC`,
@@ -53,12 +39,10 @@ export const MemberService = {
       : await db.query(`SELECT * FROM members ORDER BY position ASC`);
     return result.rows;
   },
+
   async getMembersById(id: string) {
-    const result = await db.query(
-      `SELECT * FROM members WHERE id = $1 ORDER BY position ASC`,
-      [id],
-    );
-    return result.rows || null;
+    const result = await db.query(`SELECT * FROM members WHERE id = $1`, [id]);
+    return result.rows?.[0] || null;
   },
 
   async updateMember(id: string, data: Partial<MemberProfile>) {
@@ -75,40 +59,21 @@ export const MemberService = {
         name = $1,
         role = $2,
         designation = $3,
-        username = $4,
-        photoUrl = $5,
-        bio = $6,
-        location = $7,
-        email = $8,
-        phone = $9,
-        niche = $10,
-        followers = $11,
-        platforms = $12,
-        collaborationType = $13,
-        engagementRate = $14,
-        portfolioLinks = $15,
-        skills = $16,
-        socialLinks = $17
-       WHERE id = $18
-       RETURNING *`,
+        photourl = $4,
+        email = $5,
+        phone = $6,
+        bio = $7,
+        updated_at = NOW()
+      WHERE id = $8
+      RETURNING *`,
       [
         updated.name,
         updated.role,
         updated.designation,
-        updated.username,
         updated.photourl,
-        updated.bio,
-        updated.location,
         updated.email,
         updated.phone,
-        updated.niche,
-        updated.followers,
-        JSON.stringify(updated.platforms || []),
-        JSON.stringify(updated.collaborationtype || []),
-        updated.engagementrate,
-        JSON.stringify(updated.portfoliolinks || []),
-        JSON.stringify(updated.skills || []),
-        JSON.stringify(updated.sociallinks || {}),
+        updated.bio,
         id,
       ],
     );

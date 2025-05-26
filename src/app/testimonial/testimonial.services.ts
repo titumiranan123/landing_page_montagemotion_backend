@@ -5,21 +5,22 @@ import { ITestimonial } from "./testimonial.interface";
 export const testimonialService = {
   async addTestimonial(data: ITestimonial) {
     try {
-      const lastdata = await db.query(
+      const { rows } = await db.query(
         `SELECT position FROM testimonials ORDER BY position DESC LIMIT 1`,
       );
-      const newPosition =
-        lastdata.rows.length > 0 ? lastdata.rows[0].position + 1 : 1;
+
+      const newPosition = rows.length > 0 ? rows[0].position + 1 : 1;
 
       const result = await db.query(
-        `INSERT INTO testimonials (name, designation, message, image, video_message, position, category, type)
+        `INSERT INTO testimonials 
+         (name, designation, message, image, video_message, position, category, type)
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
         [
           data.name,
           data.designation,
-          data.message || "",
+          data.message ?? null,
           data.image,
-          data.video_message || "",
+          data.video_message ?? null,
           newPosition,
           data.category,
           data.type,
@@ -51,49 +52,55 @@ export const testimonialService = {
     const client = await db.connect();
     try {
       await client.query("BEGIN");
-      for (const testimonial of testimonials) {
+
+      for (const { id, position } of testimonials) {
+        if (!id || position === undefined) continue;
         await client.query(
           `UPDATE testimonials SET position = $1 WHERE id = $2`,
-          [testimonial.position, testimonial.id],
+          [position, id],
         );
       }
+
       await client.query("COMMIT");
       return testimonials;
     } catch (error) {
       await client.query("ROLLBACK");
       errorLogger.error(error);
-      throw new Error("Position update failed");
+      throw new Error("Failed to update testimonial positions");
     } finally {
       client.release();
     }
   },
+
   async updateTestimonial(id: string, data: Partial<ITestimonial>) {
     try {
       const result = await db.query(
         `UPDATE testimonials
-         SET name = $1,
-             designation = $2,
-             message = $3,
-             image = $4,
-             video_message = $5,
-             category = $6,
-             type = $7,
-             position = $8,
-             updated_at = NOW()
+         SET 
+           name = $1,
+           designation = $2,
+           message = $3,
+           image = $4,
+           video_message = $5,
+           category = $6,
+           type = $7,
+           position = $8,
+           updated_at = NOW()
          WHERE id = $9
          RETURNING *`,
         [
           data.name,
           data.designation,
-          data.message || "",
+          data.message ?? null,
           data.image,
-          data.video_message || "",
+          data.video_message ?? null,
           data.category,
           data.type,
-          data.position || 1,
+          data.position ?? 1,
           id,
         ],
       );
+
       return result.rows[0];
     } catch (error) {
       errorLogger.error(error);
@@ -102,7 +109,12 @@ export const testimonialService = {
   },
 
   async deleteTestimonialById(id: string) {
-    await db.query(`DELETE FROM testimonials WHERE id = $1`, [id]);
-    return { message: "Testimonial deleted" };
+    try {
+      await db.query(`DELETE FROM testimonials WHERE id = $1`, [id]);
+      return { message: "Testimonial deleted" };
+    } catch (error) {
+      errorLogger.error(error);
+      throw new Error("Error deleting testimonial");
+    }
   },
 };

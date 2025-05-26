@@ -4,86 +4,53 @@ import { IAbout } from "./about.interface";
 
 export const aboutService = {
   async createOrUpdateAbout(data: IAbout) {
-    let client;
+    const client = await db.connect();
     try {
-      client = await db.connect();
       await client.query("BEGIN");
-      // Check if an about entry already exists
-      const { rows: existingRows } = await client.query(
-        `SELECT * FROM about LIMIT 1`,
-      );
+      const {
+        rows: [existing],
+      } = await client.query(`SELECT id FROM about LIMIT 1`);
+      let result;
 
-      if (existingRows.length > 0) {
+      if (existing) {
         // Update existing row
-        const result = await client.query(
+        result = await client.query(
           `UPDATE about 
-           SET title = $1, description = $2, image = $3,  updated_at = NOW() 
-           WHERE id = $4 
+           SET title = $1, description = $2, image = $3, alt = $4, updated_at = NOW() 
+           WHERE id = $5 
            RETURNING *`,
-          [data.title, data.description, data.image, existingRows[0].id],
+          [data.title, data.description, data.image, data.alt, existing.id],
         );
-        await client.query("COMMIT");
-        return result.rows[0];
       } else {
         // Insert new row
-        const result = await client.query(
-          `INSERT INTO about (title, description, image)
-           VALUES ($1, $2, $3)
+        result = await client.query(
+          `INSERT INTO about (title, description, image, alt) 
+           VALUES ($1, $2, $3, $4) 
            RETURNING *`,
-          [data.title, data.description, data.image],
+          [data.title, data.description, data.image, data.alt],
         );
+      }
 
-        await client.query("COMMIT");
-        return result.rows[0];
-      }
+      await client.query("COMMIT");
+      return result.rows[0];
     } catch (error) {
-      if (client) {
-        await client.query("ROLLBACK");
-      }
-      errorLogger.error(error);
+      await client
+        .query("ROLLBACK")
+        .catch((err) => errorLogger.error("Rollback failed", err));
+      errorLogger.error("createOrUpdateAbout failed", error);
       throw new Error("Failed to process About data.");
     } finally {
-      if (client) {
-        client.release();
-      }
+      client.release();
     }
   },
 
   async getAllAbouts() {
-    const result = await db.query(`SELECT * FROM about`);
-    return result.rows[0];
-  },
-
-  async getAboutById(id: string) {
-    const result = await db.query(`SELECT * FROM about WHERE id = $1`, [id]);
-    return result.rows[0] || null;
-  },
-
-  async updateAbout(id: string, data: Partial<IAbout>) {
-    const existing = await aboutService.getAboutById(id);
-    if (!existing) throw new Error("About not found");
-
-    const updated = {
-      ...existing,
-      ...data,
-    };
-
-    const result = await db.query(
-      `UPDATE about 
-       SET title = $1, description = $2, image = $3, updatedAt = NOW()
-       WHERE id = $4 
-       RETURNING *`,
-      [updated.title, updated.description, updated.image, id],
-    );
-
-    return result.rows[0];
-  },
-
-  async deleteAbout(id: string) {
-    const result = await db.query(
-      `DELETE FROM about WHERE id = $1 RETURNING *`,
-      [id],
-    );
-    return result.rows[0] || null;
+    try {
+      const result = await db.query(`SELECT * FROM about`);
+      return result.rows;
+    } catch (error) {
+      errorLogger.error("getAllAbouts failed", error);
+      throw new Error("Failed to fetch About data.");
+    }
   },
 };

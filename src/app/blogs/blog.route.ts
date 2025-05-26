@@ -8,7 +8,7 @@ import {
   updateBlogPosition,
 } from "./blog.controller";
 import { validate } from "../../midleware/validate";
-import { BlogSchema, BlogUpdateSchema } from "./blog.zod";
+import { BlogSchema } from "./blog.zod";
 import auth from "../../midleware/authMidleware";
 
 const router = express.Router();
@@ -24,7 +24,7 @@ router.get("/blogs/:id", getBlogById);
 router.put(
   "/blogs/:id",
   auth("ADMIN", "MODARATOR"),
-  validate(BlogUpdateSchema),
+  validate(BlogSchema.partial()),
   updateBlog,
 );
 router.patch(
