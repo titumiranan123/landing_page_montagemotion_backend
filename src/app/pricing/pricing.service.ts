@@ -8,10 +8,11 @@ export const packageService = {
     const positionResult = await db.query(
       `SELECT MAX(position) as max FROM packages`,
     );
+
     const lastPosition = positionResult.rows[0].max || 0;
     const newPosition = lastPosition + 1;
     const result = await db.query(
-      `INSERT INTO packages (is_visible, name, title, description, currency, price, unit, pricing_type, note, purchase_link, type,position)
+      `INSERT INTO packages (is_visible, name, title, description, currency, price, unit, pricing_type, note, purchase_link, type, position)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11,$12) RETURNING *`,
       [
         data.is_visible,

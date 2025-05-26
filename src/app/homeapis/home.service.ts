@@ -1,5 +1,5 @@
 import { db } from "../../db/db";
-import { errorLogger } from "../../logger/logger";
+import { errorLogger, logger } from "../../logger/logger";
 import { packageFeatureService } from "../pricing/package.service";
 
 export const homeapiServices = {
@@ -24,10 +24,15 @@ export const homeapiServices = {
       );
 
       const pricingService = async () => {
-        const res = await client.query(
-          `SELECT * FROM packages WHERE type = $1`,
-          [type],
-        );
+        let res;
+        if (type === "main") {
+          res = await client.query(`SELECT * FROM packages `);
+        } else {
+          res = await client.query(`SELECT * FROM packages WHERE type = $1`, [
+            type,
+          ]);
+        }
+        logger.info("results", res.rows);
         const packages = res.rows;
 
         for (const pkg of packages) {

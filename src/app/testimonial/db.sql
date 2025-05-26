@@ -6,6 +6,7 @@ CREATE TABLE testimonials (
   message TEXT,
   image TEXT,
   video_message TEXT,
+  category TEXT,
   position INTEGER DEFAULT 0,
   type TEXT NOT NULL CHECK (
     type IN ('main', 'shorts', 'talking', 'podcast', 'graphic', 'advertising', 'website')

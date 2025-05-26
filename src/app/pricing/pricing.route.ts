@@ -14,8 +14,8 @@ import {
 import auth from "../../midleware/authMidleware";
 const router = Router();
 // Package routes
-router.post("/pricing/", createPackage);
-router.get("/pricing/", getAllPackages);
+router.post("/pricing", createPackage);
+router.get("/pricing", getAllPackages);
 router.get("/pricing/:id", getPackageById);
 router.patch("/pricing/:id", updatePackage);
 router.put("/pricing/", updatePackagePosition);

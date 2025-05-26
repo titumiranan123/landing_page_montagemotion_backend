@@ -5,6 +5,7 @@ CREATE TABLE packages (
   name VARCHAR(255) NOT NULL,
   title VARCHAR(255),
   description TEXT,
+  purchase_link TEXT,
   currency VARCHAR(10) DEFAULT 'USD',
   price NUMERIC(10, 2) NOT NULL,
   unit VARCHAR(50),
@@ -12,6 +13,7 @@ CREATE TABLE packages (
   note TEXT,
   purchase_link TEXT,
   type VARCHAR(100),
+   position INTEGER DEFAULT 0,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
