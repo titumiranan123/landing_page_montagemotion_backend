@@ -1,8 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ListBucketsCommand, S3Client } from "@aws-sdk/client-s3";
+import {
+  ListBucketsCommand,
+  PutObjectCommand,
+  S3Client,
+} from "@aws-sdk/client-s3";
 import { errorLogger, logger } from "../logger/logger";
 import ApiError from "../utils/ApiError";
-
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { Upload } from "@aws-sdk/lib-storage";
 export const r2Client = new S3Client({
   region: "auto",
@@ -45,4 +49,18 @@ export const uploadToR2 = async (
     errorLogger.error("R2Object Error", error);
     throw new ApiError(400, false, error.message);
   }
+};
+
+export const generatePresignedUrl = async (
+  key: string,
+  contentType: string,
+) => {
+  const command = new PutObjectCommand({
+    Bucket: process.env.R2_BUCKET_NAME,
+    Key: key,
+    ContentType: contentType,
+  });
+
+  const url = await getSignedUrl(r2Client, command, { expiresIn: 3600 });
+  return url;
 };

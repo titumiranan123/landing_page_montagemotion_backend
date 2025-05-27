@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import ApiError from "../../utils/ApiError";
-import { uploadToR2 } from "../../r2objectConfig/r2";
+import { generatePresignedUrl, uploadToR2 } from "../../r2objectConfig/r2";
+import { errorLogger } from "../../logger/logger";
 
 export const uploadFile = async (
   req: Request,
@@ -26,5 +27,20 @@ export const uploadFile = async (
     });
   } catch (error) {
     next(error);
+  }
+};
+export const uploadFiles = async (req: Request, res: Response) => {
+  const { fileName, contentType } = req.body;
+  if (!fileName || !contentType) {
+    res.status(400).json({ message: "Missing parameters" });
+  }
+
+  try {
+    const sanitizedKey = fileName.replace(/\s+/g, "-").toLowerCase();
+    const url = await generatePresignedUrl(sanitizedKey, contentType);
+    res.json({ uploadUrl: url, key: sanitizedKey });
+  } catch (error) {
+    errorLogger.error("Error generating presigned URL", error);
+    res.status(500).json({ message: "Failed to generate presigned URL" });
   }
 };
