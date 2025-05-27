@@ -15,7 +15,7 @@ const socialLinksSchema = z
 export const memberProfileSchema = z
   .object({
     name: z.string(),
-    role: z.enum(["Team Member", "Influencer"]),
+    role: z.enum(["team_member", "influencer"]),
     designation: z.string().optional(), // for Team Member
     username: z.string().optional(), // for Influencer
     photourl: z.string().url(),

@@ -12,6 +12,6 @@ router.post(
   validate(aboutSchema),
   createOrUpdateAbout,
 );
-router.get("/about/", getAllAbouts);
+router.get("/about", getAllAbouts);
 
 export default router;

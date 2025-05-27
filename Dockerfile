@@ -16,7 +16,8 @@ COPY . .
 # Build the TypeScript code
 RUN npm run build
 
-ENV PORT=8000
 
+
+ENV PORT=8000
 # Start the application
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "start"]
